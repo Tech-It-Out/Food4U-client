@@ -13,6 +13,7 @@ import Orders from './components/Orders/Orders'
 import Cart from './components/Cart/Cart'
 import AboutUs from './components/AboutUs/AboutUs'
 import AboutMe from './components/AboutMe/AboutMe'
+import LandingPage from './components/LandingPage/LandingPage'
 
 class App extends Component {
   constructor (props) {
@@ -57,6 +58,9 @@ class App extends Component {
           />
         ))}
         <main className="container">
+          <Route path='/' render={() => (
+            <LandingPage />
+          )} />
           <Route path='/sign-up' render={() => (
             <SignUp msgAlert={this.msgAlert} setUser={this.setUser} />
           )} />

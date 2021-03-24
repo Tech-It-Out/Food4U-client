@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -21,7 +21,6 @@ class LandingPage extends Component {
           products: response.data.products
         })
       })
-      .then(() => console.log(this.state))
       .catch(console.error)
   }
 
@@ -31,12 +30,12 @@ class LandingPage extends Component {
     } else {
       const productsJSX = (
         this.state.products.map(product => (
-          <Fragment key={product.id}>
+          <div key={product._id}>
             <p>{product.name}</p>
             <p>{product.description}</p>
             <p>{product.price}</p>
             <p>{product.imgUrl}</p>
-          </Fragment>
+          </div>
         ))
       )
 
