@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { getProductsFromApi } from '../../api/products'
-// import Product from './Product/Product'
+import Product from './Product/Product'
 
 class LandingPage extends Component {
   constructor (props) {
@@ -30,12 +30,13 @@ class LandingPage extends Component {
     } else {
       const productsJSX = (
         this.state.products.map(product => (
-          <div key={product._id}>
-            <p>{product.name}</p>
-            <p>{product.description}</p>
-            <p>{product.price}</p>
-            <p>{product.imgUrl}</p>
-          </div>
+          <Product
+            key={product._id}
+            name={product.name}
+            description={product.description}
+            price={product.price}
+            imgUrl={product.imgUrl}
+          />
         ))
       )
 
