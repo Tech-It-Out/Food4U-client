@@ -1,11 +1,15 @@
 import React, { Fragment } from 'react'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
+import NavDropdown from 'react-bootstrap/NavDropdown'
 
 const authenticatedOptions = (
   <Fragment>
-    <Nav.Link href="#change-password">Change Password</Nav.Link>
-    <Nav.Link href="#sign-out">Sign Out</Nav.Link>
+    <NavDropdown title="Account" id="basic-nav-dropdown">
+      <NavDropdown.Item href="#about-me">About Me</NavDropdown.Item>
+      <NavDropdown.Item href="#change-password">Security</NavDropdown.Item>
+      <NavDropdown.Item href="#sign-out">Sign Out</NavDropdown.Item>
+    </NavDropdown>
     <Nav.Link href="#orders">Orders</Nav.Link>
     <Nav.Link href="#cart">Cart</Nav.Link>
   </Fragment>
@@ -20,7 +24,7 @@ const unauthenticatedOptions = (
 
 const alwaysOptions = (
   <Fragment>
-    <Nav.Link href="#/">Home</Nav.Link>
+    <Nav.Link href="#about-us">About Us</Nav.Link>
   </Fragment>
 )
 
