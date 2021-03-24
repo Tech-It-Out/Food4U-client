@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 // import messages from '../AutoDismissAlert/messages'
 
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+// import Form from 'react-bootstrap/Form'
+// import Button from 'react-bootstrap/Button'
 
 class AboutMe extends Component {
   constructor (props) {
@@ -50,7 +50,7 @@ class AboutMe extends Component {
 
     return (
       <div className="row">
-        <div className="col-sm-10 col-md-8 mx-auto mt-5">
+        {/* <div className="col-sm-10 col-md-8 mx-auto mt-5">
           <h3>Change Password</h3>
           <Form onSubmit={this.onChangePassword}>
             <Form.Group controlId="oldPassword">
@@ -82,7 +82,7 @@ class AboutMe extends Component {
             Submit
             </Button>
           </Form>
-        </div>
+        </div> */}
       </div>
     )
   }
