@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-// import messages from '../AutoDismissAlert/messages'
-
-// import Form from 'react-bootstrap/Form'
-// import Button from 'react-bootstrap/Button'
+import messages from '../AutoDismissAlert/messages'
+import { updateUser } from '../../api/auth'
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
 
 class AboutMe extends Component {
   constructor (props) {
@@ -19,59 +19,97 @@ class AboutMe extends Component {
     }
   }
 
-  // handleChange = event => this.setState({
-  //   [event.target.name]: event.target.value
-  // })
+  handleChange = event => this.setState({
+    [event.target.name]: event.target.value
+  })
 
-  // onChangePassword = event => {
-  //   event.preventDefault()
+  onUpdateUser = event => {
+    event.preventDefault()
 
-  //   const { msgAlert, history, user } = this.props
+    const { msgAlert, history, user } = this.props
 
-  //   changePassword(this.state, user)
-  //     .then(() => msgAlert({
-  //       heading: 'Change Password Success',
-  //       message: messages.changePasswordSuccess,
-  //       variant: 'success'
-  //     }))
-  //     .then(() => history.push('/'))
-  //     .catch(error => {
-  //       this.setState({ oldPassword: '', newPassword: '' })
-  //       msgAlert({
-  //         heading: 'Change Password Failed with error: ' + error.message,
-  //         message: messages.changePasswordFailure,
-  //         variant: 'danger'
-  //       })
-  //     })
-  // }
+    updateUser(this.state, user)
+      .then(() => msgAlert({
+        heading: 'You have successfully updated your profile',
+        message: messages.changePasswordSuccess,
+        variant: 'success'
+      }))
+      .then(() => history.push('/'))
+      .catch(error => {
+        this.setState({ oldPassword: '', newPassword: '' })
+        msgAlert({
+          heading: 'Profile update failed! See error: ' + error.message,
+          message: messages.changePasswordFailure,
+          variant: 'danger'
+        })
+      })
+  }
 
   render () {
-    // const { oldPassword, newPassword } = this.state
+    const { firstName, surname, street, apartment, state, country } = this.state
 
     return (
       <div className="row">
-        {/* <div className="col-sm-10 col-md-8 mx-auto mt-5">
-          <h3>Change Password</h3>
-          <Form onSubmit={this.onChangePassword}>
-            <Form.Group controlId="oldPassword">
-              <Form.Label>Old password</Form.Label>
+        <div className="col-sm-10 col-md-8 mx-auto mt-5">
+          <h3>About Me</h3>
+          <Form onSubmit={this.onUpdateUser}>
+            <Form.Group controlId="firstName">
+              <Form.Label>First Name</Form.Label>
               <Form.Control
-                required
-                name="oldPassword"
-                value={oldPassword}
-                type="password"
-                placeholder="Old Password"
+                name="firstName"
+                value={firstName}
+                type="text"
+                placeholder="First Name"
                 onChange={this.handleChange}
               />
             </Form.Group>
-            <Form.Group controlId="newPassword">
-              <Form.Label>New Password</Form.Label>
+            <Form.Group controlId="surname">
+              <Form.Label>Last Name</Form.Label>
               <Form.Control
-                required
-                name="newPassword"
-                value={newPassword}
-                type="password"
-                placeholder="New Password"
+                name="surname"
+                value={surname}
+                type="text"
+                placeholder="Last Name"
+                onChange={this.handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="street">
+              <Form.Label>Street Address</Form.Label>
+              <Form.Control
+                name="street"
+                value={street}
+                type="text"
+                placeholder="Street Address"
+                onChange={this.handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="apartment">
+              <Form.Label>Apartment</Form.Label>
+              <Form.Control
+                name="apartment"
+                value={apartment}
+                type="text"
+                placeholder="Apartment"
+                onChange={this.handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="state">
+              <Form.Label>State</Form.Label>
+              <Form.Control
+                name="state"
+                value={state}
+                type="text"
+                placeholder="State"
+                onChange={this.handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="country">
+              <Form.Label>Country</Form.Label>
+              <Form.Control
+                name="country"
+                value={country}
+                type="text"
+                placeholder="Country"
                 onChange={this.handleChange}
               />
             </Form.Group>
@@ -82,7 +120,7 @@ class AboutMe extends Component {
             Submit
             </Button>
           </Form>
-        </div> */}
+        </div>
       </div>
     )
   }

@@ -83,7 +83,7 @@ class App extends Component {
             <Cart user={user} />
           )} />
           <AuthenticatedRoute user={user} path='/about-me' render={() => (
-            <AboutMe user={user} />
+            <AboutMe msgAlert={this.msgAlert} user={user} />
           )} />
         </main>
       </Fragment>

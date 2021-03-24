@@ -53,3 +53,23 @@ export const changePassword = (passwords, user) => {
     }
   })
 }
+
+export const updateUser = (data, user) => {
+  return axios({
+    url: apiUrl + '/update',
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${user.token}`
+    },
+    data: {
+      user: {
+        firstName: data.firstName,
+        surname: data.surname,
+        street: data.street,
+        apartment: data.apartment,
+        state: data.state,
+        country: data.country
+      }
+    }
+  })
+}
