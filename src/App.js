@@ -9,6 +9,10 @@ import SignUp from './components/SignUp/SignUp'
 import SignIn from './components/SignIn/SignIn'
 import SignOut from './components/SignOut/SignOut'
 import ChangePassword from './components/ChangePassword/ChangePassword'
+import Orders from './components/Orders/Orders'
+import Cart from './components/Cart/Cart'
+import AboutUs from './components/AboutUs/AboutUs'
+import AboutMe from './components/AboutMe/AboutMe'
 
 class App extends Component {
   constructor (props) {
@@ -59,11 +63,23 @@ class App extends Component {
           <Route path='/sign-in' render={() => (
             <SignIn msgAlert={this.msgAlert} setUser={this.setUser} />
           )} />
+          <Route path='/about-us' render={() => (
+            <AboutUs setUser={this.setUser} />
+          )} />
           <AuthenticatedRoute user={user} path='/sign-out' render={() => (
             <SignOut msgAlert={this.msgAlert} clearUser={this.clearUser} user={user} />
           )} />
           <AuthenticatedRoute user={user} path='/change-password' render={() => (
             <ChangePassword msgAlert={this.msgAlert} user={user} />
+          )} />
+          <AuthenticatedRoute user={user} path='/orders' render={() => (
+            <Orders user={user} />
+          )} />
+          <AuthenticatedRoute user={user} path='/cart' render={() => (
+            <Cart user={user} />
+          )} />
+          <AuthenticatedRoute user={user} path='/about-me' render={() => (
+            <AboutMe user={user} />
           )} />
         </main>
       </Fragment>
