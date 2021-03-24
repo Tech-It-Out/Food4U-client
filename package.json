@@ -1,6 +1,6 @@
 {
   "name": "food4u-client",
-  "homepage": "https://Tech-It-Out.github.io/Food4U",
+  "homepage": "https://Tech-It-Out.github.io/Food4U-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
