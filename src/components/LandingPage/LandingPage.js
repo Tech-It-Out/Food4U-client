@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import { getProductsFromApi } from '../../api/products'
 import Product from './Product/Product'
+import styled from 'styled-components'
 
 class LandingPage extends Component {
   constructor (props) {
@@ -17,8 +15,14 @@ class LandingPage extends Component {
     // make axios call to set the products state
     getProductsFromApi()
       .then(response => {
+        // sort products array by product name in alphabetically ascending order
+        return response.data.products.sort(function (a, b) {
+          return a.name.localeCompare(b.name)
+        })
+      })
+      .then(products => {
         this.setState({
-          products: response.data.products
+          products: products
         })
       })
       .catch(console.error)
@@ -41,16 +45,25 @@ class LandingPage extends Component {
       )
 
       return (
-        <Container fluid>
-          <Row>
-            <Col>
-              { productsJSX }
-            </Col>
-          </Row>
-        </Container>
+        <div className="row mt-4">
+          <ProductsDiv>
+            { productsJSX }
+          </ProductsDiv>
+        </div>
       )
     }
   }
 }
+
+const ProductsDiv = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 25px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`
 
 export default LandingPage
