@@ -28,16 +28,6 @@ class Orders extends Component {
     const { orders } = this.props
     const completedOrders = orders.filter(order => order.status === 'complete')
     console.log('completedOrders data: ', completedOrders)
-    const itemsPrice = []
-    const costs = completedOrders.map(order => {
-      order.orderItems.map(items => {
-        console.log('items data', items)
-        itemsPrice.push(items.quantity * items.price)
-        console.log('itemsPrice array: ', itemsPrice)
-      })
-      console.log('order.orderitems info: ', order.orderItems)
-    })
-    console.log('costs data info: ', costs)
     if (completedOrders.length === 0) {
       return <h2>No complete orders</h2>
     } else {
@@ -47,7 +37,10 @@ class Orders extends Component {
             <tr>
               <td>{order.updatedAt}</td>
               <td>{order.orderItems.length}</td>
-              <td>${order.orderItems[0].price}</td>
+              <td>${order.orderItems.reduce((acc, currentValue) => {
+                return acc + (currentValue.price * currentValue.quantity)
+              }, 0)}
+              </td>
             </tr>
           </Fragment>
         ))
