@@ -68,7 +68,14 @@ const Button = styled.button`
   padding: 3px;
   border-radius: 10px;
   width: 100%;
+  color: rgb(0,117,103);
   text-align: center;
+  transition: background-color 0.2s ease-in, color 0.2s ease-in;
+  
+  &:hover {
+    background-color: rgb(0,154,132);
+    color: rgb(255,255,255)
+  }
 `
 
 export default Product
