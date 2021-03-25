@@ -20,6 +20,7 @@ class App extends Component {
     super(props)
     this.state = {
       user: null,
+      orders: null,
       msgAlerts: []
     }
   }
@@ -27,6 +28,15 @@ class App extends Component {
   setUser = user => this.setState({ user })
 
   clearUser = () => this.setState({ user: null })
+
+  getUserTokenFromAppState = () => this.state.user.token
+
+  setAppOrderHistoryState = (response) => {
+    console.log(response.data.orders)
+    this.setState({
+      orders: response.data.orders
+    })
+  }
 
   deleteAlert = (id) => {
     this.setState((state) => {
@@ -65,7 +75,12 @@ class App extends Component {
             <SignUp msgAlert={this.msgAlert} setUser={this.setUser} />
           )} />
           <Route path='/sign-in' render={() => (
-            <SignIn msgAlert={this.msgAlert} setUser={this.setUser} />
+            <SignIn
+              msgAlert={this.msgAlert}
+              setUser={this.setUser}
+              getUserTokenFromAppState={this.getUserTokenFromAppState}
+              setAppOrderHistoryState={this.setAppOrderHistoryState}
+            />
           )} />
           <Route path='/about-us' render={() => (
             <AboutUs setUser={this.setUser} />
