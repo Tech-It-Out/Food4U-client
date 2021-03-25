@@ -36,10 +36,8 @@ class LandingPage extends Component {
         this.state.products.map(product => (
           <Product
             key={product._id}
-            name={product.name}
-            description={product.description}
-            price={product.price}
-            imgUrl={product.imgUrl}
+            product={product}
+            handleAddProductEvent={this.props.handleAddProductEvent}
           />
         ))
       )

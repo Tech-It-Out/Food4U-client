@@ -14,6 +14,13 @@ import Cart from './components/Cart/Cart'
 import AboutUs from './components/AboutUs/AboutUs'
 import AboutMe from './components/AboutMe/AboutMe'
 import LandingPage from './components/LandingPage/LandingPage'
+import messages from './components/AutoDismissAlert/messages'
+import {
+  getOrderHistoryFromAPI,
+  updateOrderItemWithQuantity,
+  createNewOrderItemWithData,
+  createNewOrder
+} from './api/orders'
 
 class App extends Component {
   constructor (props) {
@@ -32,10 +39,52 @@ class App extends Component {
   getUserTokenFromAppState = () => this.state.user.token
 
   setAppOrderHistoryState = (response) => {
-    console.log(response.data.orders)
     this.setState({
       orders: response.data.orders
     })
+  }
+
+  handleAddProductEvent = (product) => {
+    // before checking the order history for products, get the latest order hsitory from API
+    getOrderHistoryFromAPI(this.state.user.token)
+      .then(response => this.setAppOrderHistoryState(response))
+      .then(() => {
+        const cart = this.state.orders.find(order => order.status === 'cart')
+        if (this.state.user) {
+          // Check if orders contain order with property status === cart
+          // If no such order exists, send create-new-order request to API
+          if (cart) {
+            // If cart order exists, check if passed productId matches an order item
+            const orderItem = cart.orderItems.find(orderItem => orderItem.productId.toString() === product._id)
+            if (orderItem) {
+              // If yes: increment said order item quantity by 1
+              updateOrderItemWithQuantity(orderItem.quantity + 1, cart._id, orderItem._id, this.state.user.token)
+                .then(console.log)
+                .catch(console.error)
+            } else {
+              // If no: send create-new-order-item request to API
+              createNewOrderItemWithData(cart._id, this.state.user.token, product)
+                .then(console.log)
+                .catch(console.error)
+            }
+          } else {
+            // Create new order with status cart
+            createNewOrder(this.state.user.token)
+              .then(() => {
+                // Create new order-item
+                return createNewOrderItemWithData(cart._id, this.state.user.token, product)
+              })
+              .catch(console.error)
+          }
+        } else {
+          this.msgAlert({
+            heading: 'Please Sign In First',
+            message: messages.signInFirst,
+            variant: 'info'
+          })
+        }
+      })
+      .catch(console.error)
   }
 
   deleteAlert = (id) => {
@@ -69,7 +118,9 @@ class App extends Component {
         ))}
         <main className="container">
           <Route exact path='/' render={() => (
-            <LandingPage />
+            <LandingPage
+              handleAddProductEvent={this.handleAddProductEvent}
+            />
           )} />
           <Route path='/sign-up' render={() => (
             <SignUp msgAlert={this.msgAlert} setUser={this.setUser} />
