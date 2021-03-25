@@ -146,7 +146,7 @@ class App extends Component {
             <Orders user={user} orders={orders} />
           )} />
           <AuthenticatedRoute user={user} path='/cart' render={() => (
-            <Cart user={user} />
+            <Cart user={user} orders={orders}  />
           )} />
           <AuthenticatedRoute user={user} path='/about-me' render={() => (
             <AboutMe msgAlert={this.msgAlert} user={user} />
