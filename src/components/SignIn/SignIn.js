@@ -7,6 +7,8 @@ import messages from '../AutoDismissAlert/messages'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
+import { getOrderHistoryFromAPI } from '../../api/orders'
+
 class SignIn extends Component {
   constructor (props) {
     super(props)
@@ -34,6 +36,13 @@ class SignIn extends Component {
         variant: 'success'
       }))
       .then(() => history.push('/'))
+      .then(() => {
+        // get order history from api
+        return getOrderHistoryFromAPI(this.props.getUserTokenFromAppState())
+      })
+      .then(orders => {
+        this.props.setAppOrderHistoryState(orders)
+      })
       .catch(error => {
         this.setState({ email: '', password: '' })
         msgAlert({
