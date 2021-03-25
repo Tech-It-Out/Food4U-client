@@ -1,29 +1,11 @@
 import React, { Component, Fragment } from 'react'
 import { withRouter } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
-
-// import { getOrders } from '../../api/auth'
 // import messages from '../AutoDismissAlert/messages'
-
 // import Form from 'react-bootstrap/Form'
 // import Button from 'react-bootstrap/Button'
 
 class Orders extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      date: '',
-      products: '',
-      cost: null,
-      orderItems: []
-    }
-  }
-
-  // handleChange = event => this.setState({
-  //   [event.target.name]: event.target.value
-  // })
-
   render () {
     const { orders } = this.props
     const completedOrders = orders.filter(order => order.status === 'complete')
