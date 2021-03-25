@@ -52,7 +52,7 @@ class App extends Component {
   }
 
   render () {
-    const { msgAlerts, user } = this.state
+    const { msgAlerts, user, orders } = this.state
 
     return (
       <Fragment>
@@ -92,7 +92,7 @@ class App extends Component {
             <ChangePassword msgAlert={this.msgAlert} user={user} />
           )} />
           <AuthenticatedRoute user={user} path='/orders' render={() => (
-            <Orders user={user} />
+            <Orders user={user} orders={orders} />
           )} />
           <AuthenticatedRoute user={user} path='/cart' render={() => (
             <Cart user={user} />
