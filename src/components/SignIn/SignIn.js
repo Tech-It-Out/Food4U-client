@@ -38,7 +38,6 @@ class SignIn extends Component {
       .then(() => history.push('/'))
       .then(() => {
         // get order history from api
-        console.log(getOrderHistoryFromAPI(this.props.getUserTokenFromAppState()))
         return getOrderHistoryFromAPI(this.props.getUserTokenFromAppState())
       })
       .then(orders => {

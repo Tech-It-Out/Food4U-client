@@ -15,6 +15,7 @@ import AboutUs from './components/AboutUs/AboutUs'
 import AboutMe from './components/AboutMe/AboutMe'
 import LandingPage from './components/LandingPage/LandingPage'
 import messages from './components/AutoDismissAlert/messages'
+import { getProductsFromApi } from './api/products'
 import {
   getOrderHistoryFromAPI,
   updateOrderItemWithQuantity,
@@ -28,8 +29,26 @@ class App extends Component {
     this.state = {
       user: null,
       orders: null,
+      product: null,
       msgAlerts: []
     }
+  }
+
+  componentDidMount () {
+    // make axios call to set the products state
+    getProductsFromApi()
+      .then(response => {
+        // sort products array by product name in alphabetically ascending order
+        return response.data.products.sort(function (a, b) {
+          return a.name.localeCompare(b.name)
+        })
+      })
+      .then(products => {
+        this.setState({
+          products: products
+        })
+      })
+      .catch(console.error)
   }
 
   setUser = user => this.setState({ user })
@@ -120,6 +139,7 @@ class App extends Component {
           <Route exact path='/' render={() => (
             <LandingPage
               handleAddProductEvent={this.handleAddProductEvent}
+              products={this.state.products}
             />
           )} />
           <Route path='/sign-up' render={() => (
@@ -146,7 +166,11 @@ class App extends Component {
             <Orders user={user} orders={orders} />
           )} />
           <AuthenticatedRoute user={user} path='/cart' render={() => (
-            <Cart user={user} orders={orders}  />
+            <Cart
+              user={user}
+              orders={orders}
+              products={this.state.products}
+            />
           )} />
           <AuthenticatedRoute user={user} path='/about-me' render={() => (
             <AboutMe msgAlert={this.msgAlert} user={user} />
