@@ -45,11 +45,9 @@ class LandingPage extends Component {
       )
 
       return (
-        <div className="row mt-4">
-          <ProductsDiv>
-            { productsJSX }
-          </ProductsDiv>
-        </div>
+        <ProductsDiv className='mt-4'>
+          { productsJSX }
+        </ProductsDiv>
       )
     }
   }
@@ -61,7 +59,7 @@ const ProductsDiv = styled.div`
   grid-template-columns: 1fr 1fr;
   grid-gap: 25px;
   
-  @media (max-width: 768px) {
+  @media (max-width: 992px) {
     grid-template-columns: 1fr;
   }
 `
