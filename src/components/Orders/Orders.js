@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { withRouter } from 'react-router-dom'
+import Table from 'react-bootstrap/Table'
 
 // import { getOrders } from '../../api/auth'
 // import messages from '../AutoDismissAlert/messages'
@@ -12,8 +13,10 @@ class Orders extends Component {
     super(props)
 
     this.state = {
-      oldPassword: '',
-      newPassword: ''
+      date: '',
+      products: '',
+      cost: null,
+      orderItems: []
     }
   }
 
@@ -21,36 +24,52 @@ class Orders extends Component {
   //   [event.target.name]: event.target.value
   // })
 
-  // onChangePassword = event => {
-  //   event.preventDefault()
-
-  //   const { msgAlert, history, user } = this.props
-
-  //   changePassword(this.state, user)
-  //     .then(() => msgAlert({
-  //       heading: 'Change Password Success',
-  //       message: messages.changePasswordSuccess,
-  //       variant: 'success'
-  //     }))
-  //     .then(() => history.push('/'))
-  //     .catch(error => {
-  //       this.setState({ oldPassword: '', newPassword: '' })
-  //       msgAlert({
-  //         heading: 'Change Password Failed with error: ' + error.message,
-  //         message: messages.changePasswordFailure,
-  //         variant: 'danger'
-  //       })
-  //     })
-  // }
-
   render () {
-    // const { oldPassword, newPassword } = this.state
-
-    return (
-      <div className="row">
-        <h1>Orders Page</h1>
-      </div>
-    )
+    const { orders } = this.props
+    const completedOrders = orders.filter(order => order.status === 'complete')
+    console.log('completedOrders data: ', completedOrders)
+    const itemsPrice = []
+    const costs = completedOrders.map(order => {
+      order.orderItems.map(items => {
+        console.log('items data', items)
+        itemsPrice.push(items.quantity * items.price)
+        console.log('itemsPrice array: ', itemsPrice)
+      })
+      console.log('order.orderitems info: ', order.orderItems)
+    })
+    console.log('costs data info: ', costs)
+    if (completedOrders.length === 0) {
+      return <h2>No complete orders</h2>
+    } else {
+      const ordersJsx = (
+        completedOrders.map(order => (
+          <Fragment key={order._id}>
+            <tr>
+              <td>{order.updatedAt}</td>
+              <td>{order.orderItems.length}</td>
+              <td>${order.orderItems[0].price}</td>
+            </tr>
+          </Fragment>
+        ))
+      )
+      return (
+        <div className="row">
+          <h1>Orders Page</h1>
+          <Table striped bordered>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Products</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              { ordersJsx }
+            </tbody>
+          </Table>
+        </div>
+      )
+    }
   }
 }
 
