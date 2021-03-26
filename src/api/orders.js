@@ -58,3 +58,13 @@ export const createNewOrder = token => {
     }
   })
 }
+
+export const deleteOrderItem = (orderId, orderItemId, token) => {
+  return axios({
+    url: apiUrl + '/orders/' + orderId + '/orderItem/' + orderItemId,
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+}

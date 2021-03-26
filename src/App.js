@@ -64,7 +64,7 @@ class App extends Component {
   }
 
   handleAddProductEvent = (product) => {
-    // before checking the order history for products, get the latest order hsitory from API
+    // before checking the order history for products, get the latest order history from API
     getOrderHistoryFromAPI(this.state.user.token)
       .then(response => this.setAppOrderHistoryState(response))
       .then(() => {
@@ -78,12 +78,16 @@ class App extends Component {
             if (orderItem) {
               // If yes: increment said order item quantity by 1
               updateOrderItemWithQuantity(orderItem.quantity + 1, cart._id, orderItem._id, this.state.user.token)
-                .then(console.log)
+                // Update order history and set state in APP component
+                .then(() => getOrderHistoryFromAPI(this.state.user.token))
+                .then(response => this.setAppOrderHistoryState(response))
                 .catch(console.error)
             } else {
               // If no: send create-new-order-item request to API
               createNewOrderItemWithData(cart._id, this.state.user.token, product)
-                .then(console.log)
+                // Update order history and set state in APP component
+                .then(() => getOrderHistoryFromAPI(this.state.user.token))
+                .then(response => this.setAppOrderHistoryState(response))
                 .catch(console.error)
             }
           } else {
@@ -103,6 +107,8 @@ class App extends Component {
           })
         }
       })
+      // .then(() => getOrderHistoryFromAPI(this.state.user.token))
+      // .then(response => this.setAppOrderHistoryState(response))
       .catch(console.error)
   }
 
@@ -170,6 +176,7 @@ class App extends Component {
               user={user}
               orders={orders}
               products={this.state.products}
+              setAppOrderHistoryState={this.setAppOrderHistoryState}
             />
           )} />
           <AuthenticatedRoute user={user} path='/about-me' render={() => (
