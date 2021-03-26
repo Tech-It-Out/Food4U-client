@@ -29,14 +29,10 @@ class AboutMe extends Component {
   onUpdateUser = event => {
     event.preventDefault()
 
-    const { msgAlert, history, user } = this.props
+    const { msgAlert, history, user, setUser } = this.props
 
     updateUser(this.state, user)
-    // const { firstName, surname, street, apartment, state, country } = this.state
-      .then(response => console.log('response data: ', response))
-      .then(() => console.log('state data: ', this.state))
-      .then(() => console.log('user data: ', user))
-      .then(() => console.log('currentstate after setState: ', this.state))
+      .then(res => setUser(res.data.user))
       .then(() => msgAlert({
         heading: 'You have successfully updated your profile',
         variant: 'success'
