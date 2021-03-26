@@ -6,14 +6,19 @@ class Product extends Component {
     return (
       <ProductComponent>
         <ProductImageContainer>
-          <ProductImage src={this.props.imgUrl} alt={this.props.name} />
+          <ProductImage src={this.props.product.imgUrl} alt={this.props.name} />
         </ProductImageContainer>
         <ProductTextContainer>
-          <ProductName>{this.props.name}</ProductName>
-          <ProductDescription>{this.props.description}</ProductDescription>
+          <ProductName>{this.props.product.name}</ProductName>
+          <ProductDescription>{this.props.product.description}</ProductDescription>
         </ProductTextContainer>
         <ButtonContainer>
-          <Button type='button'>${this.props.price.toFixed(2)}</Button>
+          <Button
+            type='button'
+            onClick={() => this.props.handleAddProductEvent(this.props.product)}
+          >
+            ${this.props.product.price.toFixed(2)}
+          </Button>
         </ButtonContainer>
       </ProductComponent>
     )

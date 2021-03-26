@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { getProductsFromApi } from '../../api/products'
 import Product from './Product/Product'
 import styled from 'styled-components'
 
@@ -11,35 +10,16 @@ class LandingPage extends Component {
     }
   }
 
-  componentDidMount () {
-    // make axios call to set the products state
-    getProductsFromApi()
-      .then(response => {
-        // sort products array by product name in alphabetically ascending order
-        return response.data.products.sort(function (a, b) {
-          return a.name.localeCompare(b.name)
-        })
-      })
-      .then(products => {
-        this.setState({
-          products: products
-        })
-      })
-      .catch(console.error)
-  }
-
   render () {
-    if (!this.state.products) {
+    if (!this.props.products) {
       return <p>Loading...</p>
     } else {
       const productsJSX = (
-        this.state.products.map(product => (
+        this.props.products.map(product => (
           <Product
             key={product._id}
-            name={product.name}
-            description={product.description}
-            price={product.price}
-            imgUrl={product.imgUrl}
+            product={product}
+            handleAddProductEvent={this.props.handleAddProductEvent}
           />
         ))
       )
