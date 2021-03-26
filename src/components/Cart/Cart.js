@@ -6,6 +6,7 @@ import {
   deleteOrderItem,
   getOrderHistoryFromAPI
 } from '../../api/orders'
+import StripeButton from './Stripe/StripeButton'
 
 class Cart extends Component {
   handleDeleteOrderItem = (orderId, orderItemId) => {
@@ -79,6 +80,10 @@ class Cart extends Component {
             {rowTotal}
           </tbody>
         </Table>
+        <StripeButton
+          type='button'
+          user={this.props.user}
+        />
       </Fragment>
     )
   }

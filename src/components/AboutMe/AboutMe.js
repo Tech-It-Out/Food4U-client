@@ -10,12 +10,15 @@ class AboutMe extends Component {
     super(props)
 
     this.state = {
-      firstName: '',
-      surname: '',
-      street: '',
-      apartment: '',
-      state: '',
-      country: ''
+      user: {
+        firstName: '',
+        surname: '',
+        street: '',
+        apartment: '',
+        state: '',
+        country: ''
+      },
+      updated: false
     }
   }
 
@@ -26,17 +29,17 @@ class AboutMe extends Component {
   onUpdateUser = event => {
     event.preventDefault()
 
-    const { msgAlert, history, user } = this.props
+    const { msgAlert, history, user, setUser } = this.props
 
     updateUser(this.state, user)
+      .then(res => setUser(res.data.user))
       .then(() => msgAlert({
         heading: 'You have successfully updated your profile',
-        message: messages.changePasswordSuccess,
         variant: 'success'
       }))
       .then(() => history.push('/'))
       .catch(error => {
-        this.setState({ oldPassword: '', newPassword: '' })
+        this.setState({ firstName: '', surname: '', street: '', apartment: '', state: '', country: '' })
         msgAlert({
           heading: 'Profile update failed! See error: ' + error.message,
           message: messages.changePasswordFailure,
@@ -47,7 +50,7 @@ class AboutMe extends Component {
 
   render () {
     const { firstName, surname, street, apartment, state, country } = this.state
-
+    const { user } = this.props
     return (
       <div className="row">
         <div className="col-sm-10 col-md-8 mx-auto mt-5">
@@ -59,7 +62,7 @@ class AboutMe extends Component {
                 name="firstName"
                 value={firstName}
                 type="text"
-                placeholder="First Name"
+                placeholder={user.firstName}
                 onChange={this.handleChange}
               />
             </Form.Group>
@@ -69,7 +72,7 @@ class AboutMe extends Component {
                 name="surname"
                 value={surname}
                 type="text"
-                placeholder="Last Name"
+                placeholder={user.surname}
                 onChange={this.handleChange}
               />
             </Form.Group>
@@ -79,7 +82,7 @@ class AboutMe extends Component {
                 name="street"
                 value={street}
                 type="text"
-                placeholder="Street Address"
+                placeholder={user.street}
                 onChange={this.handleChange}
               />
             </Form.Group>
@@ -89,7 +92,7 @@ class AboutMe extends Component {
                 name="apartment"
                 value={apartment}
                 type="text"
-                placeholder="Apartment"
+                placeholder={user.apartment}
                 onChange={this.handleChange}
               />
             </Form.Group>
@@ -99,7 +102,7 @@ class AboutMe extends Component {
                 name="state"
                 value={state}
                 type="text"
-                placeholder="State"
+                placeholder={user.state}
                 onChange={this.handleChange}
               />
             </Form.Group>
@@ -109,7 +112,7 @@ class AboutMe extends Component {
                 name="country"
                 value={country}
                 type="text"
-                placeholder="Country"
+                placeholder={user.country}
                 onChange={this.handleChange}
               />
             </Form.Group>

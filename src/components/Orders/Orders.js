@@ -9,7 +9,6 @@ class Orders extends Component {
   render () {
     const { orders } = this.props
     const completedOrders = orders.filter(order => order.status === 'complete')
-    console.log('completedOrders data: ', completedOrders)
     if (completedOrders.length === 0) {
       return <h2>No complete orders</h2>
     } else {
