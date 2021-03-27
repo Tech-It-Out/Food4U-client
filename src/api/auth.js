@@ -73,3 +73,13 @@ export const updateUser = (data, user) => {
     }
   })
 }
+
+export const getUserDataFromAPI = token => {
+  return axios({
+    url: apiUrl + '/user',
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+}

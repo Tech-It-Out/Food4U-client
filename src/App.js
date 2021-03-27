@@ -22,6 +22,7 @@ import {
   createNewOrderItemWithData,
   createNewOrder
 } from './api/orders'
+import { getUserDataFromAPI } from './api/auth'
 
 class App extends Component {
   constructor (props) {
@@ -32,9 +33,26 @@ class App extends Component {
       product: null,
       msgAlerts: []
     }
+    this.hydrateState()
   }
 
-  componentDidMount () {
+  hydrateState = () => {
+    const token = window.sessionStorage.getItem('token')
+    if (token) {
+      // get user data from api and set state
+      getUserDataFromAPI(token)
+        .then(res => {
+          this.setState({ user: res.data.user })
+        })
+        .catch(console.error)
+      // get orders from api and set state
+      getOrderHistoryFromAPI(token)
+        .then(res => {
+          this.setState({ orders: res.data.orders })
+        })
+        .catch(console.error)
+    }
+
     // make axios call to set the products state
     getProductsFromApi()
       .then(response => {
@@ -51,7 +69,11 @@ class App extends Component {
       .catch(console.error)
   }
 
-  setUser = user => this.setState({ user })
+  setUser = user => {
+    this.setState({ user })
+    window.sessionStorage.setItem('token', user.token)
+    console.log(user.token)
+  }
 
   clearUser = () => this.setState({ user: null })
 
@@ -107,8 +129,6 @@ class App extends Component {
           })
         }
       })
-      // .then(() => getOrderHistoryFromAPI(this.state.user.token))
-      // .then(response => this.setAppOrderHistoryState(response))
       .catch(console.error)
   }
 
@@ -126,7 +146,7 @@ class App extends Component {
   }
 
   render () {
-    const { msgAlerts, user, orders } = this.state
+    const { msgAlerts, user, orders, products } = this.state
 
     return (
       <Fragment>
@@ -180,7 +200,7 @@ class App extends Component {
             <Cart
               user={user}
               orders={orders}
-              products={this.state.products}
+              products={products}
               setAppOrderHistoryState={this.setAppOrderHistoryState}
             />
           )} />
