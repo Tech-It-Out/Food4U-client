@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { Route, withRouter } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
 import queryString from 'query-string'
-// import _ from 'lodash'
+import _ from 'lodash'
 
 import AuthenticatedRoute from './components/AuthenticatedRoute/AuthenticatedRoute'
 import AutoDismissAlert from './components/AutoDismissAlert/AutoDismissAlert'
@@ -34,50 +34,57 @@ class App extends Component {
       user: null,
       orders: null,
       product: null,
-      path: null,
+      stripeCheckout: null,
       msgAlerts: []
     }
     this.hydrateState()
-    this.pushToHistoryAfterRedirect()
+  }
+
+  componentDidMount () {
+  //
   }
 
   hydrateState = () => {
     const token = window.sessionStorage.getItem('token')
     if (token) {
-      // get user data from api and set state
       getUserDataFromAPI(token)
+        // get user data from api and set state
         .then(res => {
           this.setState({ user: res.data.user })
         })
-        .catch(console.error)
-      // get orders from api and set state
-      getOrderHistoryFromAPI(token)
-        .then(res => {
-          this.setState({ orders: res.data.orders })
+        // get orders from api and set state
+        .then(() => getOrderHistoryFromAPI(token))
+        .then(res => this.setState({ orders: res.data.orders }))
+        // make axios call to set the products state
+        .then(() => getProductsFromApi())
+        .then(response => {
+          // sort products array by product name in alphabetically ascending order
+          return response.data.products.sort(function (a, b) {
+            return a.name.localeCompare(b.name)
+          })
+        })
+        .then(products => {
+          this.setState({
+            products: products
+          })
+        })
+        .then(() => {
+          const { history } = this.props
+          const queryStringObj = this.getQueryStringObj()
+          if (!_.isEmpty(queryStringObj)) {
+            const checkout = queryStringObj.checkout
+            this.setState({ stripeCheckout: checkout })
+            checkout === 'success' ? history.push('/orders') : history.push('/cart')
+          }
         })
         .catch(console.error)
     }
-
-    // make axios call to set the products state
-    getProductsFromApi()
-      .then(response => {
-        // sort products array by product name in alphabetically ascending order
-        return response.data.products.sort(function (a, b) {
-          return a.name.localeCompare(b.name)
-        })
-      })
-      .then(products => {
-        this.setState({
-          products: products
-        })
-      })
-      .catch(console.error)
   }
 
   setUser = user => {
     this.setState({ user })
+    // store the token in session storage for persistence after Stripe checkout
     window.sessionStorage.setItem('token', user.token)
-    console.log(user.token)
   }
 
   clearUser = () => this.setState({ user: null })
@@ -157,49 +164,8 @@ class App extends Component {
     return queryString.parse(query)
   }
 
-  pushToHistoryAfterRedirect = () => {
-    if (this.path === '#/cart') {
-      this.setState({ path: this.path })
-      this.props.history.push('/cart')
-      console.log(this.state)
-    }
-  }
-
   render () {
     const { msgAlerts, user, orders, products } = this.state
-    console.log(this.props.history.location)
-    console.log(this.path)
-
-    // let landingPageJSX = ''
-    // const queryStringObj = this.getQueryStringObj()
-    // // const path = this.props.history.location.pathname
-    //
-    // if (_.isEmpty(queryStringObj)) {
-    //   landingPageJSX = (
-    //     <Route exact path='/' render={() => (
-    //       <LandingPage
-    //         handleAddProductEvent={this.handleAddProductEvent}
-    //         products={this.state.products}
-    //       />
-    //     )}/>
-    //   )
-    // } else if (queryStringObj.payment === 'failure') {
-    //   landingPageJSX = (
-    //     <Redirect to='/cart' />
-    //   )
-    // } else if (queryStringObj.payment === 'success') {
-    //   landingPageJSX = (
-    //     <Redirect to='/orders' />
-    //   )
-    // }
-
-    // if home route '/' contains query string 'payment=failure'
-    // show appropriate user message and redirect to cart
-
-    // if home route '/' contains query string 'payment=success'
-    // show appropriate user message and redirect to orders
-
-    // if home route '/' has no query strings then show Landing Page
 
     return (
       <Fragment>
