@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, withRouter } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
+import queryString from 'query-string'
+// import _ from 'lodash'
 
 import AuthenticatedRoute from './components/AuthenticatedRoute/AuthenticatedRoute'
 import AutoDismissAlert from './components/AutoDismissAlert/AutoDismissAlert'
@@ -27,13 +29,16 @@ import { getUserDataFromAPI } from './api/auth'
 class App extends Component {
   constructor (props) {
     super(props)
+    this.path = window.location.hash
     this.state = {
       user: null,
       orders: null,
       product: null,
+      path: null,
       msgAlerts: []
     }
     this.hydrateState()
+    this.pushToHistoryAfterRedirect()
   }
 
   hydrateState = () => {
@@ -145,8 +150,56 @@ class App extends Component {
     })
   }
 
+  getQueryStringObj = () => {
+    // get query string from withRouter browser history
+    const query = this.props.history.location.search
+    // use queryString library to parse query string into an object with key: value pairs
+    return queryString.parse(query)
+  }
+
+  pushToHistoryAfterRedirect = () => {
+    if (this.path === '#/cart') {
+      this.setState({ path: this.path })
+      this.props.history.push('/cart')
+      console.log(this.state)
+    }
+  }
+
   render () {
     const { msgAlerts, user, orders, products } = this.state
+    console.log(this.props.history.location)
+    console.log(this.path)
+
+    // let landingPageJSX = ''
+    // const queryStringObj = this.getQueryStringObj()
+    // // const path = this.props.history.location.pathname
+    //
+    // if (_.isEmpty(queryStringObj)) {
+    //   landingPageJSX = (
+    //     <Route exact path='/' render={() => (
+    //       <LandingPage
+    //         handleAddProductEvent={this.handleAddProductEvent}
+    //         products={this.state.products}
+    //       />
+    //     )}/>
+    //   )
+    // } else if (queryStringObj.payment === 'failure') {
+    //   landingPageJSX = (
+    //     <Redirect to='/cart' />
+    //   )
+    // } else if (queryStringObj.payment === 'success') {
+    //   landingPageJSX = (
+    //     <Redirect to='/orders' />
+    //   )
+    // }
+
+    // if home route '/' contains query string 'payment=failure'
+    // show appropriate user message and redirect to cart
+
+    // if home route '/' contains query string 'payment=success'
+    // show appropriate user message and redirect to orders
+
+    // if home route '/' has no query strings then show Landing Page
 
     return (
       <Fragment>
@@ -167,7 +220,7 @@ class App extends Component {
               handleAddProductEvent={this.handleAddProductEvent}
               products={this.state.products}
             />
-          )} />
+          )}/>
           <Route path='/sign-up' render={() => (
             <SignUp
               msgAlert={this.msgAlert}
@@ -213,4 +266,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default withRouter(App)
