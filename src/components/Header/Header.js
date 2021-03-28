@@ -11,7 +11,7 @@ const authenticatedOptions = (
       <NavDropdown.Item href="#sign-out">Sign Out</NavDropdown.Item>
     </NavDropdown>
     <Nav.Link href="#orders">Orders</Nav.Link>
-    <Nav.Link href="#cart">Cart</Nav.Link>
+    <Nav.Link href="#cart"><i className='fas fa-shopping-cart'></i>Cart</Nav.Link>
   </Fragment>
 )
 
@@ -27,8 +27,10 @@ const alwaysOptions = (
     <Nav.Link href="#about-us">About Us</Nav.Link>
   </Fragment>
 )
-
-const Header = ({ user }) => (
+// handleCartNum = () => {
+//   console.log(this.props)
+// }
+const Header = ({ user, orders }) => (
   <Navbar bg="primary" variant="dark" expand="md">
     <Navbar.Brand href="#">
       Food4U
@@ -36,8 +38,13 @@ const Header = ({ user }) => (
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
       <Nav className="ml-auto">
-        { user && <span className="navbar-text mr-2">Welcome, {user.email}</span>}
+        { user && <span className="navbar-text mr-2">{user.firstName ? `Welcome, ${user.firstName}` : ''}</span>}
         { alwaysOptions }
+        {console.log('orders data: ', orders.filter(order => order.status == 'cart'))}
+        {/* {orders.filter(order => {
+          const cart = order.status === 'cart'
+          return cart.orderItems.length
+        })} */}
         { user ? authenticatedOptions : unauthenticatedOptions }
       </Nav>
     </Navbar.Collapse>
