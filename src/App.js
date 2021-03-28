@@ -22,14 +22,14 @@ import {
   getOrderHistoryFromAPI,
   updateOrderItemWithQuantity,
   createNewOrderItemWithData,
-  createNewOrder
+  createNewOrder,
+  updateOrderStatus
 } from './api/orders'
 import { getUserDataFromAPI } from './api/auth'
 
 class App extends Component {
   constructor (props) {
     super(props)
-    this.path = window.location.hash
     this.state = {
       user: null,
       orders: null,
@@ -41,41 +41,89 @@ class App extends Component {
   }
 
   componentDidMount () {
-  //
+    // make axios call to get the products...
+    getProductsFromApi()
+      // ...sort products alphabetically...
+      .then(res => {
+        // sort products array by product name in alphabetically ascending order
+        return res.data.products.sort(function (a, b) {
+          return a.name.localeCompare(b.name)
+        })
+      })
+      // ...and set products to state such that they are displayed on landing page
+      .then(products => {
+        this.setState({
+          products: products
+        })
+      })
+      .catch(console.error)
   }
 
   hydrateState = () => {
     const token = window.sessionStorage.getItem('token')
+    console.log(token)
     if (token) {
+      console.log('1: get user data with token')
+      // 2454ad4011df474783beb28693cf1881
       getUserDataFromAPI(token)
         // get user data from api and set state
         .then(res => {
+          console.log('2: set state with user data')
           this.setState({ user: res.data.user })
         })
         // get orders from api and set state
-        .then(() => getOrderHistoryFromAPI(token))
-        .then(res => this.setState({ orders: res.data.orders }))
-        // make axios call to set the products state
-        .then(() => getProductsFromApi())
-        .then(response => {
-          // sort products array by product name in alphabetically ascending order
-          return response.data.products.sort(function (a, b) {
-            return a.name.localeCompare(b.name)
-          })
+        .then(() => {
+          console.log('3: get order history from api')
+          return getOrderHistoryFromAPI(token)
         })
-        .then(products => {
-          this.setState({
-            products: products
-          })
+        .then(res => {
+          console.log('4: set state with order history')
+          this.setState({ orders: res.data.orders })
         })
         .then(() => {
-          const { history } = this.props
+          console.log('5: retrieve query object after Stripe redirect back to client')
           const queryStringObj = this.getQueryStringObj()
           if (!_.isEmpty(queryStringObj)) {
             const checkout = queryStringObj.checkout
+            // set state stripeCheckout to the result of the checkout
             this.setState({ stripeCheckout: checkout })
-            checkout === 'success' ? history.push('/orders') : history.push('/cart')
           }
+        })
+        .then(() => {
+          console.log('6: if stripe was successful...')
+          // if stripe checkout was successful...
+          if (this.state.stripeCheckout === 'success') {
+            // ... create new order with status cart
+            console.log('7: create new order with status cart')
+            return createNewOrder(this.state.user.token)
+              .then(() => {
+                console.log('8: find first order with status cart from order history state')
+                const cart = this.state.orders.find(order => order.status === 'cart')
+                // ...update order history by setting order status to complete
+                console.log('9: update order with status cart to status complete')
+                return updateOrderStatus(this.state.user.token, cart._id, 'complete')
+              })
+              // ... re-update order history and set state...
+              .then((res) => {
+                console.log('10: retrieve latest order history again after successful order history update')
+                return getOrderHistoryFromAPI(this.state.user.token)
+              })
+              .then(res => {
+                console.log('11: set orders state with updated order history')
+                this.setState({ orders: res.data.orders })
+              })
+              .catch(console.error)
+          }
+        })
+        .then(() => {
+          console.log('12: redirect browser to either /orders or /cart depending on result of Stripe payment')
+          const { history } = this.props
+          this.state.stripeCheckout === 'success' ? history.push('/orders') : history.push('/cart')
+        })
+        // finally, reset stripeCheckout state to null
+        .then(() => {
+          console.log('13: reset stripeCheckout state to null')
+          this.setState({ stripeCheckout: null })
         })
         .catch(console.error)
     }

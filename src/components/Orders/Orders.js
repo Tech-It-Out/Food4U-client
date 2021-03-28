@@ -20,7 +20,7 @@ class Orders extends Component {
               <td>{order.orderItems.length}</td>
               <td>${order.orderItems.reduce((acc, currentValue) => {
                 return acc + (currentValue.price * currentValue.quantity)
-              }, 0)}
+              }, 0).toFixed(2)}
               </td>
             </tr>
           </Fragment>
