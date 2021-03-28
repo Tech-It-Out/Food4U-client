@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { withRouter } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
+import _ from 'lodash'
 // import messages from '../AutoDismissAlert/messages'
 // import Form from 'react-bootstrap/Form'
 // import Button from 'react-bootstrap/Button'
@@ -8,7 +9,8 @@ import Table from 'react-bootstrap/Table'
 class Orders extends Component {
   render () {
     const { orders } = this.props
-    const completedOrders = orders.filter(order => order.status === 'complete')
+    const completeOrders = orders.filter(order => order.status === 'complete')
+    const completedOrders = _.reverse(completeOrders)
     if (completedOrders.length === 0) {
       return <h2>No complete orders</h2>
     } else {
