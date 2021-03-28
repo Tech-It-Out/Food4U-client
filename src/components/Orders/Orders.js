@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { withRouter } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
 import _ from 'lodash'
+import Moment from 'react-moment'
 // import messages from '../AutoDismissAlert/messages'
 // import Form from 'react-bootstrap/Form'
 // import Button from 'react-bootstrap/Button'
@@ -18,7 +19,7 @@ class Orders extends Component {
         completedOrders.map(order => (
           <Fragment key={order._id}>
             <tr>
-              <td>{order.updatedAt}</td>
+              <td><Moment format='YYYY-MM-DD HH:mm ' >{order.updatedAt}</Moment>GMT</td>
               <td>{order.orderItems.length}</td>
               <td>${order.orderItems.reduce((acc, currentValue) => {
                 return acc + (currentValue.price * currentValue.quantity)
