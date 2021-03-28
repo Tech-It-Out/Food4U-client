@@ -40,7 +40,7 @@ const Header = ({ user, orders }) => (
       <Nav className="ml-auto">
         { user && <span className="navbar-text mr-2">{user.firstName ? `Welcome, ${user.firstName}` : ''}</span>}
         { alwaysOptions }
-        {console.log('orders data: ', orders.filter(order => order.status == 'cart'))}
+        {console.log('orders data: ', orders)}
         {/* {orders.filter(order => {
           const cart = order.status === 'cart'
           return cart.orderItems.length
