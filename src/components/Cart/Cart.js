@@ -6,7 +6,14 @@ import StripeButton from './Stripe/StripeButton'
 
 class Cart extends Component {
   render () {
-    const { handleDeleteOrderItem, orders, products, user } = this.props
+    const {
+      handleDeleteOrderItem,
+      orders,
+      products,
+      user,
+      handleAddProductEvent
+    } = this.props
+
     // locate and assign current cart
     const cart = orders.find(order => order.status === 'cart')
 
@@ -15,6 +22,8 @@ class Cart extends Component {
       const product = products.find(product => product._id === productId)
       return product.imgUrl
     }
+
+    const getProduct = productId => products.find(product => product._id === productId)
 
     const orderItemJSX = (
       cart.orderItems.map(orderItem => (
@@ -25,11 +34,13 @@ class Cart extends Component {
           <td>{orderItem.quantity}</td>
           <td>${(orderItem.price * orderItem.quantity).toFixed(2)}</td>
           <td>
+            <div onClick={() => handleAddProductEvent(getProduct(orderItem.productId), -1)}>-</div>
             <button
               type='button'
               onClick={() => handleDeleteOrderItem(cart._id, orderItem._id)}>
               X
             </button>
+            <div onClick={() => handleAddProductEvent(getProduct(orderItem.productId), 1)}>+</div>
           </td>
         </tr>
       ))
@@ -56,7 +67,7 @@ class Cart extends Component {
               <th>Unit Price</th>
               <th>Quantity</th>
               <th>Cost</th>
-              <th>Delete?</th>
+              <th>Amend</th>
             </tr>
           </thead>
           <tbody>

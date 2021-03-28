@@ -6,5 +6,6 @@ export default {
   signOutSuccess: 'Come back soon!',
   changePasswordSuccess: 'Password changed successfully!',
   changePasswordFailure: 'Failed to change passwords. Check your old password and try again.',
-  signInFirst: 'Only signed-in customers can add products to their cart. Please sign in or create an account.'
+  signInFirst: 'Only signed-in customers can add products to their cart. Please sign in or create an account.',
+  clickDeleteItem: 'Please click on the cross instead.'
 }

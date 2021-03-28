@@ -58,6 +58,13 @@ class App extends Component {
         })
       })
       .catch(console.error)
+
+    // if user is logged in, get order history from api and update state
+    if (this.state.user) {
+      getOrderHistoryFromAPI(this.state.user.token)
+        .then(response => this.setAppOrderHistoryState(response))
+        .catch(console.error)
+    }
   }
 
   hydrateState = () => {
@@ -151,44 +158,38 @@ class App extends Component {
     })
   }
 
-  handleAddProductEvent = (product) => {
+  handleAddProductEvent = (product, quantityAdder) => {
+    const { user, orders } = this.state
     // before checking the order history for products, get the latest order history from API
-    if (this.state.user) {
-      getOrderHistoryFromAPI(this.state.user.token)
-        .then(response => this.setAppOrderHistoryState(response))
-        .then(() => {
-          const cart = this.state.orders.find(order => order.status === 'cart')
-          // Check if orders contain order with property status === cart
-          // If no such order exists, send create-new-order request to API
-          if (cart) {
-            // If cart order exists, check if passed productId matches an order item
-            const orderItem = cart.orderItems.find(orderItem => orderItem.productId.toString() === product._id)
-            if (orderItem) {
-              // If yes: increment said order item quantity by 1
-              updateOrderItemWithQuantity(orderItem.quantity + 1, cart._id, orderItem._id, this.state.user.token)
-                // Update order history and set state in APP component
-                .then(() => getOrderHistoryFromAPI(this.state.user.token))
-                .then(response => this.setAppOrderHistoryState(response))
-                .catch(console.error)
-            } else {
-              // If no: send create-new-order-item request to API
-              createNewOrderItemWithData(cart._id, this.state.user.token, product)
-                // Update order history and set state in APP component
-                .then(() => getOrderHistoryFromAPI(this.state.user.token))
-                .then(response => this.setAppOrderHistoryState(response))
-                .catch(console.error)
-            }
-          } else {
-            // Create new order with status cart
-            createNewOrder(this.state.user.token)
-              .then(() => {
-                // Create new order-item
-                return createNewOrderItemWithData(cart._id, this.state.user.token, product)
-              })
-              .catch(console.error)
-          }
-        })
-        .catch(console.error)
+    if (user) {
+      // find cart from order history
+      const cart = orders.find(order => order.status === 'cart')
+      // check if passed productId matches an order item
+      const orderItem = cart.orderItems.find(orderItem => orderItem.productId.toString() === product._id)
+      if (orderItem) {
+        // If order item with said productId exists: change order item quantity by quantityAdder
+        if (orderItem.quantity === 1 && quantityAdder === -1) {
+          // display customer alert
+          this.msgAlert({
+            heading: 'Delete item?',
+            message: messages.clickDeleteItem,
+            variant: 'info'
+          })
+        } else {
+          updateOrderItemWithQuantity(orderItem.quantity + quantityAdder, cart._id, orderItem._id, user.token)
+            // Update order history and set state in APP component
+            .then(() => getOrderHistoryFromAPI(user.token))
+            .then(res => this.setAppOrderHistoryState(res))
+            .catch(console.error)
+        }
+      } else {
+        // If no order item with said productId exists, create-new-order-item
+        createNewOrderItemWithData(cart._id, user.token, product)
+          // Update order history and set state in APP component
+          .then(() => getOrderHistoryFromAPI(user.token))
+          .then(res => this.setAppOrderHistoryState(res))
+          .catch(console.error)
+      }
     } else {
       this.msgAlert({
         heading: 'Please Sign In First',
@@ -293,6 +294,7 @@ class App extends Component {
               products={products}
               setAppOrderHistoryState={this.setAppOrderHistoryState}
               handleDeleteOrderItem={this.handleDeleteOrderItem}
+              handleAddProductEvent={this.handleAddProductEvent}
             />
           )} />
           <AuthenticatedRoute user={user} path='/about-me' render={() => (

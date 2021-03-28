@@ -45,7 +45,7 @@ class Product extends Component {
         <ButtonContainer>
           <Button
             type='button'
-            onClick={() => handleAddProductEvent(product)}
+            onClick={() => handleAddProductEvent(product, 1)}
           >
             ${product.price.toFixed(2)}
           </Button>
