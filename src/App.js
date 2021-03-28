@@ -65,7 +65,6 @@ class App extends Component {
     console.log(token)
     if (token) {
       console.log('1: get user data with token')
-      // 2454ad4011df474783beb28693cf1881
       getUserDataFromAPI(token)
         // get user data from api and set state
         .then(res => {
@@ -84,6 +83,7 @@ class App extends Component {
         .then(() => {
           console.log('5: retrieve query object after Stripe redirect back to client')
           const queryStringObj = this.getQueryStringObj()
+          console.log(queryStringObj)
           if (!_.isEmpty(queryStringObj)) {
             const checkout = queryStringObj.checkout
             // set state stripeCheckout to the result of the checkout
@@ -111,23 +111,27 @@ class App extends Component {
               })
               .then(res => {
                 console.log('11: set orders state with updated order history')
-                this.setState({ orders: res.data.orders })
+                return this.setState({ orders: res.data.orders })
+              })
+              .then(() => {
+                // finally, reset stripeCheckout state to null and reset session storage
+                console.log('12: reset stripeCheckout state and session storage')
+                this.setState({ stripeCheckout: null })
+                console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
+                const { history } = this.props
+                history.push('/orders')
               })
               .catch(console.error)
           }
+          if (this.state.stripeCheckout === 'failure') {
+            // finally, reset stripeCheckout state to null and reset session storage
+            console.log('12: reset stripeCheckout state and session storage')
+            this.setState({ stripeCheckout: null })
+            console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
+            const { history } = this.props
+            history.push('/cart')
+          }
         })
-        .then(() => {
-          console.log('12: redirect browser to either /orders or /cart depending on result of Stripe payment')
-          const { history } = this.props
-          this.state.stripeCheckout === 'success' ? history.push('/orders') : history.push('/cart')
-        })
-        // finally, reset stripeCheckout state to null and reset session storage
-        .then(() => {
-          console.log('13: reset stripeCheckout state to null')
-          this.setState({ stripeCheckout: null })
-          window.sessionStorage.clear()
-        })
-        .catch(console.error)
     }
   }
 
@@ -210,6 +214,7 @@ class App extends Component {
   getQueryStringObj = () => {
     // get query string from withRouter browser history
     const query = this.props.history.location.search
+    console.log(this.props.history.location.search)
     // use queryString library to parse query string into an object with key: value pairs
     return queryString.parse(query)
   }
