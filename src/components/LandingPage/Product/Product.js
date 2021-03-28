@@ -66,6 +66,12 @@ const ProductComponent = styled.div`
   &:last-of-type {
     margin-bottom: 30px;
   }
+  
+  &:hover {
+    div img {
+      transform: scale(1.01) rotate(2deg);
+    }
+  }
 `
 
 const ProductImageContainer = styled.div`
@@ -94,6 +100,7 @@ const ProductImage = styled.img`
   background-color: rgb(240,231,234);
   height: 50px;
   width: 50px;
+  transition: transform .18s ease-out;
   @media (min-width: 520px) {
     height: 70px;
     width: 70px;
