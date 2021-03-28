@@ -23,7 +23,8 @@ import {
   updateOrderItemWithQuantity,
   createNewOrderItemWithData,
   createNewOrder,
-  updateOrderStatus
+  updateOrderStatus,
+  deleteOrderItem
 } from './api/orders'
 import { getUserDataFromAPI } from './api/auth'
 
@@ -212,6 +213,19 @@ class App extends Component {
     return queryString.parse(query)
   }
 
+  handleDeleteOrderItem = (orderId, orderItemId) => {
+    // 1) send delete orderItem request to API
+    deleteOrderItem(orderId, orderItemId, this.state.user.token)
+      .then(() => {
+        console.log('Success')
+        // 2) upon successfully resolving the promise, get updated order history
+        return getOrderHistoryFromAPI(this.state.user.token)
+      })
+      // 3) update state in APP with latest order history
+      .then(response => this.setAppOrderHistoryState(response))
+      .catch(console.error)
+  }
+
   render () {
     const { msgAlerts, user, orders, products } = this.state
 
@@ -269,6 +283,7 @@ class App extends Component {
               orders={orders}
               products={products}
               setAppOrderHistoryState={this.setAppOrderHistoryState}
+              handleDeleteOrderItem={this.handleDeleteOrderItem}
             />
           )} />
           <AuthenticatedRoute user={user} path='/about-me' render={() => (
