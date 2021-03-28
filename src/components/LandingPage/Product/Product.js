@@ -72,8 +72,8 @@ const ProductImageContainer = styled.div`
   height: 50px;
   width: 50px;
   @media (min-width: 520px) {
-    height: 100px;
-    width: 100px;
+    height: 70px;
+    width: 70px;
   }
 `
 
@@ -92,8 +92,8 @@ const ProductImage = styled.img`
   height: 50px;
   width: 50px;
   @media (min-width: 520px) {
-    height: 100px;
-    width: 100px;
+    height: 70px;
+    width: 70px;
   }
 `
 
@@ -130,7 +130,7 @@ const DeleteButton = styled.div`
   }
 `
 
-const Button = styled.button`
+export const Button = styled.button`
   background-color: rgb(83,204,187);
   border: 2px solid rgb(0,116,102);
   padding: 3px;

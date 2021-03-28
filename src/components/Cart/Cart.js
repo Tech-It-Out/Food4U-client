@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { withRouter } from 'react-router-dom'
-import Table from 'react-bootstrap/Table'
+// import Table from 'react-bootstrap/Table'
 import styled from 'styled-components'
 import StripeButton from './Stripe/StripeButton'
 
@@ -34,13 +34,9 @@ class Cart extends Component {
           <td>{orderItem.quantity}</td>
           <td>${(orderItem.price * orderItem.quantity).toFixed(2)}</td>
           <td>
-            <div onClick={() => handleAddProductEvent(getProduct(orderItem.productId), -1)}>-</div>
-            <button
-              type='button'
-              onClick={() => handleDeleteOrderItem(cart._id, orderItem._id)}>
-              X
-            </button>
-            <div onClick={() => handleAddProductEvent(getProduct(orderItem.productId), 1)}>+</div>
+            <IncreaseQuantity onClick={() => handleAddProductEvent(getProduct(orderItem.productId), 1)}>▲</IncreaseQuantity>
+            <DeleteItem onClick={() => handleDeleteOrderItem(cart._id, orderItem._id)}>x</DeleteItem>
+            <ReduceQuantity onClick={() => handleAddProductEvent(getProduct(orderItem.productId), -1)}>▼</ReduceQuantity>
           </td>
         </tr>
       ))
@@ -48,26 +44,26 @@ class Cart extends Component {
 
     const rowTotal = (
       <tr>
-        <th colSpan='3'></th>
+        <td colSpan='3'></td>
         <th>Total</th>
         <th>${cart.orderItems.reduce((acc, newVal) => {
           return acc + newVal.price * newVal.quantity
         }, 0).toFixed(2)}
         </th>
+        <th></th>
       </tr>
     )
 
-    return (
+    const fullCartJSX = (
       <Fragment>
-        <h2>Your Cart</h2>
-        <Table striped bordered hover>
+        <Table className='table table-hover table-responsive-sm'>
           <thead>
             <tr>
-              <th colSpan='2'>Product</th>
-              <th>Unit Price</th>
-              <th>Quantity</th>
-              <th>Cost</th>
-              <th>Amend</th>
+              <th colSpan='2'>Item</th>
+              <th>Price</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -81,12 +77,150 @@ class Cart extends Component {
         />
       </Fragment>
     )
+
+    const emptyCartJSX = (
+      <p>Your cart is currently empty. Please click on the logo top left to pick items you want to add to the cart.</p>
+    )
+
+    const cartJSX = cart.orderItems.length ? fullCartJSX : emptyCartJSX
+
+    return (
+      <Fragment>
+        <div className="row">
+          <div className="col-sm-12 col-md-10 mx-auto mt-5">
+            <H3>Your Cart</H3>
+            {cartJSX}
+          </div>
+        </div>
+      </Fragment>
+    )
   }
 }
+
+const H3 = styled.h3`
+  margin-bottom: 20px;
+`
 
 const ProductImg = styled.img`
   width: 40px;
   height: 40px;
+`
+
+const ReduceQuantity = styled.div`
+  margin: 5px auto;
+  color: rgb(146,0,46);
+  border: 2px solid rgb(146,0,46);
+  border-radius: 10px;
+  background: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  box-shadow: 1px 1px 7px #c4c4c4;
+  transition: background-color 0.2s ease-in, color 0.2s ease-in;
+  &:hover {
+    background-color: rgb(146,0,46);
+    color: rgb(255,255,255);
+    cursor: pointer;
+  }
+`
+
+const DeleteItem = styled(ReduceQuantity)`
+  background-color: rgba(146,0,46,0.5);
+  color: white;
+  &:hover {
+    background-color: rgb(146,0,46)
+  }
+`
+
+const IncreaseQuantity = styled(ReduceQuantity)`
+  color: darkolivegreen;
+  border-color: darkolivegreen;
+  &:hover {
+    background-color: darkolivegreen;
+  }
+`
+
+const Table = styled.table`
+  table-layout: fixed;
+  border: none;
+
+  th {
+    letter-spacing: 2px;
+    background-color: rgb(146,0,46);
+    color: white;
+    font-weight: bold;
+  }
+
+  thead th:nth-child(1) {
+    width: 36%;
+    text-align: center;
+  }
+
+  thead th:nth-child(2) {
+    width: 16%;
+    text-align: center;
+  }
+
+  thead th:nth-child(3) {
+    width: 16%;
+    text-align: center;
+  }
+
+  thead th:nth-child(4) {
+    width: 22%;
+    text-align: center;
+  }
+
+  thead th:nth-child(5) {
+    width: 10%;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }
+
+  th, td {
+    padding: 15px;
+    border: none;
+  }
+
+
+  td {
+    letter-spacing: 1px;
+    vertical-align: middle;
+  }
+
+  tbody,
+  td {
+    text-align: center;
+  }
+  
+  td:nth-child(1) {
+    text-align: right;
+  }
+
+  td:nth-child(2) {
+    text-align: left;
+  }
+
+  td:nth-child(6) {
+    margin: 0;
+    padding: 0;
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: rgb(240,231,234);
+  }
+  
+  td[colspan='3'] {
+    background-color: rgb(240,231,234);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: white;
+  }
 `
 
 export default withRouter(Cart)

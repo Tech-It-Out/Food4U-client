@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import apiUrl from '../../../apiConfig'
+import { Button } from '../../LandingPage/Product/Product'
+import styled from 'styled-components'
 
 class StripeButton extends Component {
   constructor (props) {
@@ -46,16 +48,15 @@ class StripeButton extends Component {
     if (result.error) {
       // If `redirectToCheckout` fails due to a browser or network
       // error, display the localized error message to your customer
-      // todo: set-up customer facing error message
       console.log(result.error.message)
     }
   }
 
   render () {
     const Button = ({ handleClick }) => (
-      <button type="button" id="checkout-button" role="link" onClick={handleClick}>
+      <CheckoutButton type="button" id="checkout-button" role="link" onClick={handleClick}>
         Checkout
-      </button>
+      </CheckoutButton>
     )
 
     const Message = ({ message }) => (
@@ -67,5 +68,11 @@ class StripeButton extends Component {
     return this.state.message ? <Message message={this.state.message} /> : <Button handleClick={this.handleClick} />
   }
 }
+
+const CheckoutButton = styled(Button)`
+  margin: 30px 0;
+  max-width: 200px;
+  float: right;
+`
 
 export default StripeButton

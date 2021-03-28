@@ -29,9 +29,14 @@ class LandingPage extends Component {
       )
 
       return (
-        <ProductsDiv className='mt-4'>
-          { productsJSX }
-        </ProductsDiv>
+        <div className="row">
+          <div className="col-sm-12 col-md-10 mx-auto mt-5">
+            <h3>Our Products</h3>
+            <ProductsDiv className='mt-4'>
+              { productsJSX }
+            </ProductsDiv>
+          </div>
+        </div>
       )
     }
   }
