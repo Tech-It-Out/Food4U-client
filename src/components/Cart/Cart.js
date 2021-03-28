@@ -2,33 +2,17 @@ import React, { Component, Fragment } from 'react'
 import { withRouter } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
 import styled from 'styled-components'
-import {
-  deleteOrderItem,
-  getOrderHistoryFromAPI
-} from '../../api/orders'
 import StripeButton from './Stripe/StripeButton'
 
 class Cart extends Component {
-  handleDeleteOrderItem = (orderId, orderItemId) => {
-    // 1) send delete orderItem request to API
-    deleteOrderItem(orderId, orderItemId, this.props.user.token)
-      .then(() => {
-        console.log('Success')
-        // 2) upon successfully resolving the promise, get updated order history
-        return getOrderHistoryFromAPI(this.props.user.token)
-      })
-      // 3) update state in APP with latest order history
-      .then(response => this.props.setAppOrderHistoryState(response))
-      .catch(console.error)
-  }
-
   render () {
+    const { handleDeleteOrderItem, orders, products, user } = this.props
     // locate and assign current cart
-    const cart = this.props.orders.find(order => order.status === 'cart')
+    const cart = orders.find(order => order.status === 'cart')
 
     const getProductUrl = productId => {
       // find product with productId and return the product imgUrl
-      const product = this.props.products.find(product => product._id === productId)
+      const product = products.find(product => product._id === productId)
       return product.imgUrl
     }
 
@@ -43,7 +27,7 @@ class Cart extends Component {
           <td>
             <button
               type='button'
-              onClick={() => this.handleDeleteOrderItem(cart._id, orderItem._id)}>
+              onClick={() => handleDeleteOrderItem(cart._id, orderItem._id)}>
               X
             </button>
           </td>
@@ -82,7 +66,7 @@ class Cart extends Component {
         </Table>
         <StripeButton
           type='button'
-          user={this.props.user}
+          user={user}
         />
       </Fragment>
     )

@@ -35,7 +35,6 @@ class SignIn extends Component {
         message: messages.signInSuccess,
         variant: 'success'
       }))
-      .then(() => history.push('/'))
       .then(() => {
         // get order history from api
         return getOrderHistoryFromAPI(this.props.getUserTokenFromAppState())
@@ -43,6 +42,7 @@ class SignIn extends Component {
       .then(orders => {
         this.props.setAppOrderHistoryState(orders)
       })
+      .then(() => history.push('/'))
       .catch(error => {
         this.setState({ email: '', password: '' })
         msgAlert({

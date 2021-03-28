@@ -247,7 +247,9 @@ class App extends Component {
           <Route exact path='/' render={() => (
             <LandingPage
               handleAddProductEvent={this.handleAddProductEvent}
-              products={this.state.products}
+              products={products}
+              orders={orders}
+              user={user}
             />
           )}/>
           <Route path='/sign-up' render={() => (

@@ -11,6 +11,7 @@ class LandingPage extends Component {
   }
 
   render () {
+    const { orders, handleAddProductEvent, user } = this.props
     if (!this.props.products) {
       return <p>Loading...</p>
     } else {
@@ -19,7 +20,9 @@ class LandingPage extends Component {
           <Product
             key={product._id}
             product={product}
-            handleAddProductEvent={this.props.handleAddProductEvent}
+            handleAddProductEvent={handleAddProductEvent}
+            orders={orders}
+            user={user}
           />
         ))
       )

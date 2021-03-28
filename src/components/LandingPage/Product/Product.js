@@ -1,23 +1,42 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
+import ProductCounter from './ProductCounter/ProductCounter'
 
 class Product extends Component {
   render () {
+    const { product, orders, handleAddProductEvent, user } = this.props
+
+    let productCounter = null
+    let orderItem = null
+
+    // exclude situations where orders have not loaded yet or no order have been set up
+    if (orders) {
+      const cart = orders.find(order => order.status === 'cart')
+      orderItem = cart.orderItems.find(orderItem => orderItem.productId === product._id.toString())
+    }
+    // if user is logged in and product is in cart, display product counter
+    if (user && orderItem) {
+      productCounter = (
+        <ProductCounter orderQuantity={orderItem.quantity} />
+      )
+    }
+
     return (
       <ProductComponent>
         <ProductImageContainer>
-          <ProductImage src={this.props.product.imgUrl} alt={this.props.name} />
+          <ProductImage src={product.imgUrl} alt={product.name} />
+          {productCounter}
         </ProductImageContainer>
         <ProductTextContainer>
-          <ProductName>{this.props.product.name}</ProductName>
-          <ProductDescription>{this.props.product.description}</ProductDescription>
+          <ProductName>{product.name}</ProductName>
+          <ProductDescription>{product.description}</ProductDescription>
         </ProductTextContainer>
         <ButtonContainer>
           <Button
             type='button'
-            onClick={() => this.props.handleAddProductEvent(this.props.product)}
+            onClick={() => handleAddProductEvent(product)}
           >
-            ${this.props.product.price.toFixed(2)}
+            ${product.price.toFixed(2)}
           </Button>
         </ButtonContainer>
       </ProductComponent>
@@ -34,7 +53,15 @@ const ProductComponent = styled.div`
 `
 
 const ProductImageContainer = styled.div`
+  // set position to relative to make this the initial containing block for the product counter div 
+  position: relative;
   align-self: center;
+  height: 50px;
+  width: 50px;
+  @media (min-width: 520px) {
+    height: 100px;
+    width: 100px;
+  }
 `
 
 const ProductTextContainer = styled.div`
@@ -46,11 +73,11 @@ const ButtonContainer = styled.div`
 `
 
 const ProductImage = styled.img`
-  height: 50px;
-  width: 50px;
   padding: 10px;
   border-radius: 20px;
   background-color: rgb(240,231,234);
+  height: 50px;
+  width: 50px;
   @media (min-width: 520px) {
     height: 100px;
     width: 100px;
