@@ -250,6 +250,7 @@ class App extends Component {
               products={products}
               orders={orders}
               user={user}
+              handleDeleteOrderItem={this.handleDeleteOrderItem}
             />
           )}/>
           <Route path='/sign-up' render={() => (

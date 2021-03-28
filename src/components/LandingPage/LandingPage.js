@@ -11,7 +11,7 @@ class LandingPage extends Component {
   }
 
   render () {
-    const { orders, handleAddProductEvent, user } = this.props
+    const { orders, handleAddProductEvent, user, handleDeleteOrderItem } = this.props
     if (!this.props.products) {
       return <p>Loading...</p>
     } else {
@@ -23,6 +23,7 @@ class LandingPage extends Component {
             handleAddProductEvent={handleAddProductEvent}
             orders={orders}
             user={user}
+            handleDeleteOrderItem={handleDeleteOrderItem}
           />
         ))
       )
