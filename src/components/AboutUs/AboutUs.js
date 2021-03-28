@@ -9,7 +9,7 @@ class AboutUs extends Component {
     return (
       <div className="row">
         <div className="col-sm-12 col-md-10 mx-auto mt-5">
-          <h1>About Us Page</h1>
+          <h1>About Us</h1>
           <br />
           <P>We pride ourselves in delivering <b>fresh produce</b> to your home! All our products are sourced exclusively
             from <b>local farmers</b>. Which has the added benefit of being <b>environmentally friendly</b>. Our produce is <b>local and
