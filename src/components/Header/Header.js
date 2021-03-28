@@ -2,8 +2,9 @@ import React, { Fragment } from 'react'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown'
+import styled from 'styled-components'
 
-const authenticatedOptions = (
+const authenticatedOptions = orderItemsCount => (
   <Fragment>
     <NavDropdown title="Account" id="basic-nav-dropdown">
       <NavDropdown.Item href="#about-me">About Me</NavDropdown.Item>
@@ -11,7 +12,7 @@ const authenticatedOptions = (
       <NavDropdown.Item href="#sign-out">Sign Out</NavDropdown.Item>
     </NavDropdown>
     <Nav.Link href="#orders">Orders</Nav.Link>
-    <Nav.Link href="#cart"><i className='fas fa-shopping-cart'></i>Cart</Nav.Link>
+    <Nav.Link href="#cart"><i className='fas fa-shopping-cart'></i>&nbsp;Cart ({orderItemsCount})</Nav.Link>
   </Fragment>
 )
 
@@ -27,11 +28,16 @@ const alwaysOptions = (
     <Nav.Link href="#about-us">About Us</Nav.Link>
   </Fragment>
 )
-// handleCartNum = () => {
-//   console.log(this.props)
-// }
+
+function getOrderItemsCount (orders) {
+  if (orders) {
+    const cart = orders.find(order => order.status === 'cart')
+    return cart.orderItems.length
+  }
+}
+
 const Header = ({ user, orders }) => (
-  <Navbar bg="primary" variant="dark" expand="md">
+  <NavbarStyled bg="light" variant="light" expand="md">
     <Navbar.Brand href="#">
       Food4U
     </Navbar.Brand>
@@ -40,15 +46,14 @@ const Header = ({ user, orders }) => (
       <Nav className="ml-auto">
         { user && <span className="navbar-text mr-2">{user.firstName ? `Welcome, ${user.firstName}` : ''}</span>}
         { alwaysOptions }
-        {console.log('orders data: ', orders)}
-        {/* {orders.filter(order => {
-          const cart = order.status === 'cart'
-          return cart.orderItems.length
-        })} */}
-        { user ? authenticatedOptions : unauthenticatedOptions }
+        { user ? authenticatedOptions(getOrderItemsCount(orders)) : unauthenticatedOptions }
       </Nav>
     </Navbar.Collapse>
-  </Navbar>
+  </NavbarStyled>
 )
+
+const NavbarStyled = styled(Navbar)`
+  box-shadow: 0 3px 7px 1px rgba(0,0,0,.07),0 -3px 7px 1px rgba(0,0,0,.07);
+`
 
 export default Header
