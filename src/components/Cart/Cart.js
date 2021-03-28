@@ -25,8 +25,13 @@ class Cart extends Component {
 
     const getProduct = productId => products.find(product => product._id === productId)
 
+    // sort order items alphabetically
+    const orderItems = cart.orderItems.sort((a, b) => {
+      return a.productName.localeCompare(b.productName)
+    })
+
     const orderItemJSX = (
-      cart.orderItems.map(orderItem => (
+      orderItems.map(orderItem => (
         <tr key={orderItem._id}>
           <td><ProductImg src={getProductUrl(orderItem.productId)} alt={orderItem.productName} /></td>
           <td>{orderItem.productName}</td>
