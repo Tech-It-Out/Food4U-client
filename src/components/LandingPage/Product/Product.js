@@ -63,6 +63,9 @@ const ProductComponent = styled.div`
   grid-template-columns: auto 50% 80px;
   // set position to relative to make this the initial containing block for the DeleteButton
   position: relative;
+  &:last-of-type {
+    margin-bottom: 30px;
+  }
 `
 
 const ProductImageContainer = styled.div`
@@ -136,7 +139,7 @@ export const Button = styled.button`
   padding: 3px;
   border-radius: 10px;
   width: 100%;
-  color: rgb(0,117,103);
+  color: rgb(0,116,102);
   text-align: center;
   box-shadow: 1px 1px 7px #c4c4c4;
   transition: background-color 0.2s ease-in, color 0.2s ease-in;

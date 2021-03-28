@@ -73,6 +73,8 @@ const CheckoutButton = styled(Button)`
   margin: 30px 0;
   max-width: 200px;
   float: right;
+  background-color: rgb(0,116,102);
+  color: white;
 `
 
 export default StripeButton
