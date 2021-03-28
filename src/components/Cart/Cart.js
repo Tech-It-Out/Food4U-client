@@ -114,7 +114,7 @@ const ProductImg = styled.img`
 const ReduceQuantity = styled.div`
   margin: 5px auto;
   color: rgb(146,0,46);
-  border: 2px solid rgb(146,0,46);
+  border: none;
   border-radius: 10px;
   background: none;
   display: flex;
@@ -123,7 +123,6 @@ const ReduceQuantity = styled.div`
   width: 25px;
   height: 25px;
   padding: 0;
-  box-shadow: 1px 1px 7px #c4c4c4;
   transition: background-color 0.2s ease-in, color 0.2s ease-in;
   &:hover {
     background-color: rgb(146,0,46);
