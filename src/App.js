@@ -121,10 +121,11 @@ class App extends Component {
           const { history } = this.props
           this.state.stripeCheckout === 'success' ? history.push('/orders') : history.push('/cart')
         })
-        // finally, reset stripeCheckout state to null
+        // finally, reset stripeCheckout state to null and reset session storage
         .then(() => {
           console.log('13: reset stripeCheckout state to null')
           this.setState({ stripeCheckout: null })
+          window.sessionStorage.clear()
         })
         .catch(console.error)
     }
@@ -148,11 +149,11 @@ class App extends Component {
 
   handleAddProductEvent = (product) => {
     // before checking the order history for products, get the latest order history from API
-    getOrderHistoryFromAPI(this.state.user.token)
-      .then(response => this.setAppOrderHistoryState(response))
-      .then(() => {
-        const cart = this.state.orders.find(order => order.status === 'cart')
-        if (this.state.user) {
+    if (this.state.user) {
+      getOrderHistoryFromAPI(this.state.user.token)
+        .then(response => this.setAppOrderHistoryState(response))
+        .then(() => {
+          const cart = this.state.orders.find(order => order.status === 'cart')
           // Check if orders contain order with property status === cart
           // If no such order exists, send create-new-order request to API
           if (cart) {
@@ -182,15 +183,15 @@ class App extends Component {
               })
               .catch(console.error)
           }
-        } else {
-          this.msgAlert({
-            heading: 'Please Sign In First',
-            message: messages.signInFirst,
-            variant: 'info'
-          })
-        }
+        })
+        .catch(console.error)
+    } else {
+      this.msgAlert({
+        heading: 'Please Sign In First',
+        message: messages.signInFirst,
+        variant: 'info'
       })
-      .catch(console.error)
+    }
   }
 
   deleteAlert = (id) => {
