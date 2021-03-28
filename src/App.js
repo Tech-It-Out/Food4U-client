@@ -233,12 +233,15 @@ class App extends Component {
       .catch(console.error)
   }
 
+  handleCartNum = (ordersNum) => {
+    console.log('orders state data: ', this.state.orders)
+  }
   render () {
     const { msgAlerts, user, orders, products } = this.state
 
     return (
       <Fragment>
-        <Header user={user} />
+        <Header user={user} orders={orders} />
         {msgAlerts.map(msgAlert => (
           <AutoDismissAlert
             key={msgAlert.id}
