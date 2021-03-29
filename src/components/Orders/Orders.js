@@ -10,7 +10,16 @@ class Orders extends Component {
     const completeOrders = orders.filter(order => order.status === 'complete')
     const completedOrders = _.reverse(completeOrders)
     if (completedOrders.length === 0) {
-      return <h2>No complete orders</h2>
+      return (
+        <Fragment>
+          <div className="row">
+            <div className="col-sm-12 col-md-10 mx-auto mt-5">
+              <H3>Your Previous Orders</H3>
+              <p>You do not have any previous orders at the moment.</p>
+            </div>
+          </div>
+        </Fragment>
+      )
     } else {
       const ordersJsx = (
         completedOrders.map(order => (
