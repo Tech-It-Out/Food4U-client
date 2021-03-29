@@ -111,6 +111,12 @@ const Table = styled.table`
   tbody tr:nth-child(even) {
     background-color: white;
   }
+  
+  @media(max-width: 450px) {
+    td {
+      padding:5px 0;
+    }
+}
 `
 
 export default withRouter(Orders)
