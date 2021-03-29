@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from 'react'
 import { Route, withRouter } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
-import queryString from 'query-string'
+// query-string lib could not be minified by NPM for deployment
+// import queryString from 'query-string'
+import qs from 'querystringify'
 import _ from 'lodash'
 
 import AuthenticatedRoute from './components/AuthenticatedRoute/AuthenticatedRoute'
@@ -229,7 +231,7 @@ class App extends Component {
     // get query string from withRouter browser history
     const query = this.props.history.location.search
     // use queryString library to parse query string into an object with key: value pairs
-    return queryString.parse(query)
+    return qs.parse(query)
   }
 
   handleDeleteOrderItem = (orderId, orderItemId) => {
