@@ -57,40 +57,39 @@ class App extends Component {
           products: products
         })
       })
-      .catch(console.error)
+      .catch()
 
     // if user is logged in, get order history from api and update state
     if (this.state.user) {
       getOrderHistoryFromAPI(this.state.user.token)
         .then(response => this.setAppOrderHistoryState(response))
-        .catch(console.error)
+        .catch()
     }
   }
 
   hydrateState = () => {
     const token = window.sessionStorage.getItem('token')
-    console.log(token)
     if (token) {
-      console.log('1: get user data with token')
+      // console.log('1: get user data with token')
       getUserDataFromAPI(token)
         // get user data from api and set state
         .then(res => {
-          console.log('2: set state with user data')
+          // console.log('2: set state with user data')
           this.setState({ user: res.data.user })
         })
         // get orders from api and set state
         .then(() => {
-          console.log('3: get order history from api')
+          // console.log('3: get order history from api')
           return getOrderHistoryFromAPI(token)
         })
         .then(res => {
-          console.log('4: set state with order history')
+          // console.log('4: set state with order history')
           this.setState({ orders: res.data.orders })
         })
         .then(() => {
-          console.log('5: retrieve query object after Stripe redirect back to client')
+          // console.log('5: retrieve query object after Stripe redirect back to client')
           const queryStringObj = this.getQueryStringObj()
-          console.log(queryStringObj)
+          // console.log(queryStringObj)
           if (!_.isEmpty(queryStringObj)) {
             const checkout = queryStringObj.checkout
             // set state stripeCheckout to the result of the checkout
@@ -98,33 +97,33 @@ class App extends Component {
           }
         })
         .then(() => {
-          console.log('6: if stripe was successful...')
+          // console.log('6: if stripe was successful...')
           // if stripe checkout was successful...
           if (this.state.stripeCheckout === 'success') {
             // ... create new order with status cart
-            console.log('7: create new order with status cart')
+            // console.log('7: create new order with status cart')
             return createNewOrder(this.state.user.token)
               .then(() => {
-                console.log('8: find first order with status cart from order history state')
+                // console.log('8: find first order with status cart from order history state')
                 const cart = this.state.orders.find(order => order.status === 'cart')
                 // ...update order history by setting order status to complete
-                console.log('9: update order with status cart to status complete')
+                // console.log('9: update order with status cart to status complete')
                 return updateOrderStatus(this.state.user.token, cart._id, 'complete')
               })
               // ... re-update order history and set state...
               .then((res) => {
-                console.log('10: retrieve latest order history again after successful order history update')
+                // console.log('10: retrieve latest order history again after successful order history update')
                 return getOrderHistoryFromAPI(this.state.user.token)
               })
               .then(res => {
-                console.log('11: set orders state with updated order history')
+                // console.log('11: set orders state with updated order history')
                 return this.setState({ orders: res.data.orders })
               })
               .then(() => {
                 // finally, reset stripeCheckout state to null and reset session storage
-                console.log('12: reset stripeCheckout state and session storage')
+                // console.log('12: reset stripeCheckout state and session storage')
                 this.setState({ stripeCheckout: null })
-                console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
+                // console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
                 const { history } = this.props
                 history.push('/orders')
               })
@@ -136,13 +135,13 @@ class App extends Component {
                   variant: 'info'
                 })
               })
-              .catch(console.error)
+              .catch()
           }
           if (this.state.stripeCheckout === 'failure') {
             // finally, reset stripeCheckout state to null and reset session storage
-            console.log('12: reset stripeCheckout state and session storage')
+            // console.log('12: reset stripeCheckout state and session storage')
             this.setState({ stripeCheckout: null })
-            console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
+            // console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
             const { history } = this.props
             history.push('/cart')
             // customer messaging
@@ -194,7 +193,7 @@ class App extends Component {
             // Update order history and set state in APP component
             .then(() => getOrderHistoryFromAPI(user.token))
             .then(res => this.setAppOrderHistoryState(res))
-            .catch(console.error)
+            .catch()
         }
       } else {
         // If no order item with said productId exists, create-new-order-item
@@ -202,7 +201,7 @@ class App extends Component {
           // Update order history and set state in APP component
           .then(() => getOrderHistoryFromAPI(user.token))
           .then(res => this.setAppOrderHistoryState(res))
-          .catch(console.error)
+          .catch()
       }
     } else {
       this.msgAlert({
@@ -229,7 +228,6 @@ class App extends Component {
   getQueryStringObj = () => {
     // get query string from withRouter browser history
     const query = this.props.history.location.search
-    console.log(this.props.history.location.search)
     // use queryString library to parse query string into an object with key: value pairs
     return queryString.parse(query)
   }
@@ -238,18 +236,14 @@ class App extends Component {
     // 1) send delete orderItem request to API
     deleteOrderItem(orderId, orderItemId, this.state.user.token)
       .then(() => {
-        console.log('Success')
         // 2) upon successfully resolving the promise, get updated order history
         return getOrderHistoryFromAPI(this.state.user.token)
       })
       // 3) update state in APP with latest order history
       .then(response => this.setAppOrderHistoryState(response))
-      .catch(console.error)
+      .catch()
   }
 
-  handleCartNum = (ordersNum) => {
-    console.log('orders state data: ', this.state.orders)
-  }
   render () {
     const { msgAlerts, user, orders, products } = this.state
 

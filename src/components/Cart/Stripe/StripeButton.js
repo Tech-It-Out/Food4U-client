@@ -41,15 +41,16 @@ class StripeButton extends Component {
     const session = await response.json()
 
     // When the customer clicks on the button, redirect them to Checkout.
-    const result = await stripe.redirectToCheckout({
+    await stripe.redirectToCheckout({
       sessionId: session.id
     })
 
-    if (result.error) {
-      // If `redirectToCheckout` fails due to a browser or network
-      // error, display the localized error message to your customer
-      console.log(result.error.message)
-    }
+    // if (result.error) {
+    //   // If `redirectToCheckout` fails due to a browser or network
+    //   // error, display the localized error message to your customer
+    //   Using custom error messaging
+    //   console.log(result.error.message)
+    // }
   }
 
   render () {
