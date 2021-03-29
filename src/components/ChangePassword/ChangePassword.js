@@ -53,7 +53,7 @@ class ChangePassword extends Component {
           <H3>Change Password</H3>
           <Form onSubmit={this.onChangePassword}>
             <Form.Group controlId="oldPassword">
-              <Form.Label>Old password</Form.Label>
+              <Form.Label>Old Password</Form.Label>
               <Form.Control
                 required
                 name="oldPassword"
