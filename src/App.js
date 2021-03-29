@@ -128,6 +128,14 @@ class App extends Component {
                 const { history } = this.props
                 history.push('/orders')
               })
+              .then(() => {
+                // customer messaging
+                this.msgAlert({
+                  heading: 'Payment Confirmation',
+                  message: messages.paymentConfirmed,
+                  variant: 'info'
+                })
+              })
               .catch(console.error)
           }
           if (this.state.stripeCheckout === 'failure') {
@@ -137,6 +145,12 @@ class App extends Component {
             console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
             const { history } = this.props
             history.push('/cart')
+            // customer messaging
+            this.msgAlert({
+              heading: 'Payment Unsuccessful',
+              message: messages.paymentUnsuccessful,
+              variant: 'warning'
+            })
           }
         })
     }
