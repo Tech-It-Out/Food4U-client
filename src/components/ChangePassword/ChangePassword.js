@@ -6,6 +6,7 @@ import messages from '../AutoDismissAlert/messages'
 
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import styled from 'styled-components'
 
 class ChangePassword extends Component {
   constructor (props) {
@@ -49,7 +50,7 @@ class ChangePassword extends Component {
     return (
       <div className="row">
         <div className="col-sm-10 col-md-8 mx-auto mt-5">
-          <h3>Change Password</h3>
+          <H3>Change Password</H3>
           <Form onSubmit={this.onChangePassword}>
             <Form.Group controlId="oldPassword">
               <Form.Label>Old password</Form.Label>
@@ -85,5 +86,9 @@ class ChangePassword extends Component {
     )
   }
 }
+
+const H3 = styled.h3`
+  margin: 40px 0 20px;
+`
 
 export default withRouter(ChangePassword)

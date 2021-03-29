@@ -31,7 +31,7 @@ class LandingPage extends Component {
       return (
         <div className="row">
           <div className="col-sm-12 col-md-10 mx-auto mt-5">
-            <h3>Our Products</h3>
+            <H3>Our Products</H3>
             <ProductsDiv className='mt-4'>
               { productsJSX }
             </ProductsDiv>
@@ -41,6 +41,10 @@ class LandingPage extends Component {
     }
   }
 }
+
+const H3 = styled.h3`
+  margin: 40px 0 20px;
+`
 
 const ProductsDiv = styled.div`
   width: 100%;
