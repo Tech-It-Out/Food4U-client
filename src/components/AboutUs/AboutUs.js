@@ -9,8 +9,7 @@ class AboutUs extends Component {
     return (
       <div className="row">
         <div className="col-sm-12 col-md-10 mx-auto mt-5">
-          <h3>About Us</h3>
-          <br />
+          <H3>About Us</H3>
           <P>We pride ourselves in delivering <b>fresh produce</b> to your home! All our products are sourced exclusively
             from <b>local farmers</b>. Which has the added benefit of being <b>environmentally friendly</b>. Our produce is <b>local and
             seasonal</b> so please bear with us if items are currently unavailable - our farmers are working hard on
@@ -24,6 +23,10 @@ class AboutUs extends Component {
     )
   }
 }
+
+const H3 = styled.h3`
+  margin: 40px 0 20px;
+`
 
 const P = styled.p`
   text-align: justify;

@@ -103,7 +103,7 @@ class Cart extends Component {
 }
 
 const H3 = styled.h3`
-  margin-bottom: 20px;
+  margin: 40px 0 20px;
 `
 
 const ProductImg = styled.img`

@@ -37,10 +37,10 @@ function getOrderItemsCount (orders) {
 }
 
 const Header = ({ user, orders }) => (
-  <NavbarStyled bg="light" variant="light" expand="md">
-    <Navbar.Brand href="#">
+  <NavbarStyled bg="light" variant="light" expand="md" fixed='top'>
+    <NavbarBrandStyled href="#">
       Food4U
-    </Navbar.Brand>
+    </NavbarBrandStyled>
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
       <Nav className="ml-auto">
@@ -54,6 +54,10 @@ const Header = ({ user, orders }) => (
 
 const NavbarStyled = styled(Navbar)`
   box-shadow: 0 3px 7px 1px rgba(0,0,0,.07),0 -3px 7px 1px rgba(0,0,0,.07);
+`
+
+const NavbarBrandStyled = styled(Navbar.Brand)`
+  font-weight: bolder;
 `
 
 export default Header
