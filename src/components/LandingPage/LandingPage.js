@@ -29,18 +29,22 @@ class LandingPage extends Component {
       )
 
       return (
-        <div className="row">
+        <Div className="row">
           <div className="col-sm-12 col-md-10 mx-auto mt-5">
             <H3>Our Products</H3>
             <ProductsDiv className='mt-4'>
               { productsJSX }
             </ProductsDiv>
           </div>
-        </div>
+        </Div>
       )
     }
   }
 }
+
+const Div = styled.div`
+  margin-bottom: 60px;
+`
 
 const H3 = styled.h3`
   margin: 40px 0 20px;
