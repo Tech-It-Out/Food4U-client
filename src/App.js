@@ -3,6 +3,7 @@ import { Route, withRouter } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
 // query-string lib could not be minified by NPM for deployment
 // import queryString from 'query-string'
+// replace query-string with querystringify
 import qs from 'querystringify'
 import _ from 'lodash'
 
@@ -248,7 +249,6 @@ class App extends Component {
 
   render () {
     const { msgAlerts, user, orders, products } = this.state
-
     return (
       <Fragment>
         <Header user={user} orders={orders} />
