@@ -10,6 +10,7 @@ import {
   createNewOrder,
   getOrderHistoryFromAPI
 } from '../../api/orders'
+import styled from 'styled-components'
 
 class SignUp extends Component {
   constructor (props) {
@@ -59,7 +60,7 @@ class SignUp extends Component {
     return (
       <div className="row">
         <div className="col-sm-10 col-md-8 mx-auto mt-5">
-          <h3>Sign Up</h3>
+          <H3>Sign Up</H3>
           <Form onSubmit={this.onSignUp}>
             <Form.Group controlId="email">
               <Form.Label>Email address</Form.Label>
@@ -106,5 +107,9 @@ class SignUp extends Component {
     )
   }
 }
+
+const H3 = styled.h3`
+  margin: 40px 0 20px;
+`
 
 export default withRouter(SignUp)

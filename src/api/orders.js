@@ -68,3 +68,18 @@ export const deleteOrderItem = (orderId, orderItemId, token) => {
     }
   })
 }
+
+export const updateOrderStatus = (token, orderId, orderStatus) => {
+  return axios({
+    url: apiUrl + '/orders/' + orderId,
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    data: {
+      order: {
+        status: orderStatus
+      }
+    }
+  })
+}

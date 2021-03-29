@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import apiUrl from '../../../apiConfig'
+import { Button } from '../../LandingPage/Product/Product'
+import styled from 'styled-components'
 
 class StripeButton extends Component {
   constructor (props) {
@@ -39,23 +41,23 @@ class StripeButton extends Component {
     const session = await response.json()
 
     // When the customer clicks on the button, redirect them to Checkout.
-    const result = await stripe.redirectToCheckout({
+    await stripe.redirectToCheckout({
       sessionId: session.id
     })
 
-    if (result.error) {
-      // If `redirectToCheckout` fails due to a browser or network
-      // error, display the localized error message to your customer
-      // todo: set-up customer facing error message
-      console.log(result.error.message)
-    }
+    // if (result.error) {
+    //   // If `redirectToCheckout` fails due to a browser or network
+    //   // error, display the localized error message to your customer
+    //   Using custom error messaging
+    //   console.log(result.error.message)
+    // }
   }
 
   render () {
     const Button = ({ handleClick }) => (
-      <button type="button" id="checkout-button" role="link" onClick={handleClick}>
+      <CheckoutButton type="button" id="checkout-button" role="link" onClick={handleClick}>
         Checkout
-      </button>
+      </CheckoutButton>
     )
 
     const Message = ({ message }) => (
@@ -67,5 +69,13 @@ class StripeButton extends Component {
     return this.state.message ? <Message message={this.state.message} /> : <Button handleClick={this.handleClick} />
   }
 }
+
+const CheckoutButton = styled(Button)`
+  margin: 30px 0;
+  max-width: 200px;
+  float: right;
+  background-color: rgb(0,116,102);
+  color: white;
+`
 
 export default StripeButton

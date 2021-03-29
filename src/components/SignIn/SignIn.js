@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
 import { getOrderHistoryFromAPI } from '../../api/orders'
+import styled from 'styled-components'
 
 class SignIn extends Component {
   constructor (props) {
@@ -35,7 +36,6 @@ class SignIn extends Component {
         message: messages.signInSuccess,
         variant: 'success'
       }))
-      .then(() => history.push('/'))
       .then(() => {
         // get order history from api
         return getOrderHistoryFromAPI(this.props.getUserTokenFromAppState())
@@ -43,6 +43,7 @@ class SignIn extends Component {
       .then(orders => {
         this.props.setAppOrderHistoryState(orders)
       })
+      .then(() => history.push('/'))
       .catch(error => {
         this.setState({ email: '', password: '' })
         msgAlert({
@@ -59,7 +60,7 @@ class SignIn extends Component {
     return (
       <div className="row">
         <div className="col-sm-10 col-md-8 mx-auto mt-5">
-          <h3>Sign In</h3>
+          <H3>Sign In</H3>
           <Form onSubmit={this.onSignIn}>
             <Form.Group controlId="email">
               <Form.Label>Email address</Form.Label>
@@ -95,5 +96,9 @@ class SignIn extends Component {
     )
   }
 }
+
+const H3 = styled.h3`
+  margin: 40px 0 20px;
+`
 
 export default withRouter(SignIn)

@@ -11,6 +11,7 @@ class LandingPage extends Component {
   }
 
   render () {
+    const { orders, handleAddProductEvent, user, handleDeleteOrderItem } = this.props
     if (!this.props.products) {
       return <p>Loading...</p>
     } else {
@@ -19,19 +20,31 @@ class LandingPage extends Component {
           <Product
             key={product._id}
             product={product}
-            handleAddProductEvent={this.props.handleAddProductEvent}
+            handleAddProductEvent={handleAddProductEvent}
+            orders={orders}
+            user={user}
+            handleDeleteOrderItem={handleDeleteOrderItem}
           />
         ))
       )
 
       return (
-        <ProductsDiv className='mt-4'>
-          { productsJSX }
-        </ProductsDiv>
+        <div className="row">
+          <div className="col-sm-12 col-md-10 mx-auto mt-5">
+            <H3>Our Products</H3>
+            <ProductsDiv className='mt-4'>
+              { productsJSX }
+            </ProductsDiv>
+          </div>
+        </div>
       )
     }
   }
 }
+
+const H3 = styled.h3`
+  margin: 40px 0 20px;
+`
 
 const ProductsDiv = styled.div`
   width: 100%;

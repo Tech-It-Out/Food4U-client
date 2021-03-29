@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, withRouter } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
+import queryString from 'query-string'
+import _ from 'lodash'
 
 import AuthenticatedRoute from './components/AuthenticatedRoute/AuthenticatedRoute'
 import AutoDismissAlert from './components/AutoDismissAlert/AutoDismissAlert'
@@ -20,7 +22,9 @@ import {
   getOrderHistoryFromAPI,
   updateOrderItemWithQuantity,
   createNewOrderItemWithData,
-  createNewOrder
+  createNewOrder,
+  updateOrderStatus,
+  deleteOrderItem
 } from './api/orders'
 import { getUserDataFromAPI } from './api/auth'
 
@@ -31,48 +35,130 @@ class App extends Component {
       user: null,
       orders: null,
       product: null,
+      stripeCheckout: null,
       msgAlerts: []
     }
     this.hydrateState()
   }
 
-  hydrateState = () => {
-    const token = window.sessionStorage.getItem('token')
-    if (token) {
-      // get user data from api and set state
-      getUserDataFromAPI(token)
-        .then(res => {
-          this.setState({ user: res.data.user })
-        })
-        .catch(console.error)
-      // get orders from api and set state
-      getOrderHistoryFromAPI(token)
-        .then(res => {
-          this.setState({ orders: res.data.orders })
-        })
-        .catch(console.error)
-    }
-
-    // make axios call to set the products state
+  componentDidMount () {
+    // make axios call to get the products...
     getProductsFromApi()
-      .then(response => {
+      // ...sort products alphabetically...
+      .then(res => {
         // sort products array by product name in alphabetically ascending order
-        return response.data.products.sort(function (a, b) {
+        return res.data.products.sort(function (a, b) {
           return a.name.localeCompare(b.name)
         })
       })
+      // ...and set products to state such that they are displayed on landing page
       .then(products => {
         this.setState({
           products: products
         })
       })
-      .catch(console.error)
+      .catch()
+
+    // if user is logged in, get order history from api and update state
+    if (this.state.user) {
+      getOrderHistoryFromAPI(this.state.user.token)
+        .then(response => this.setAppOrderHistoryState(response))
+        .catch()
+    }
+  }
+
+  hydrateState = () => {
+    const token = window.sessionStorage.getItem('token')
+    if (token) {
+      // console.log('1: get user data with token')
+      getUserDataFromAPI(token)
+        // get user data from api and set state
+        .then(res => {
+          // console.log('2: set state with user data')
+          this.setState({ user: res.data.user })
+        })
+        // get orders from api and set state
+        .then(() => {
+          // console.log('3: get order history from api')
+          return getOrderHistoryFromAPI(token)
+        })
+        .then(res => {
+          // console.log('4: set state with order history')
+          this.setState({ orders: res.data.orders })
+        })
+        .then(() => {
+          // console.log('5: retrieve query object after Stripe redirect back to client')
+          const queryStringObj = this.getQueryStringObj()
+          // console.log(queryStringObj)
+          if (!_.isEmpty(queryStringObj)) {
+            const checkout = queryStringObj.checkout
+            // set state stripeCheckout to the result of the checkout
+            this.setState({ stripeCheckout: checkout })
+          }
+        })
+        .then(() => {
+          // console.log('6: if stripe was successful...')
+          // if stripe checkout was successful...
+          if (this.state.stripeCheckout === 'success') {
+            // ... create new order with status cart
+            // console.log('7: create new order with status cart')
+            return createNewOrder(this.state.user.token)
+              .then(() => {
+                // console.log('8: find first order with status cart from order history state')
+                const cart = this.state.orders.find(order => order.status === 'cart')
+                // ...update order history by setting order status to complete
+                // console.log('9: update order with status cart to status complete')
+                return updateOrderStatus(this.state.user.token, cart._id, 'complete')
+              })
+              // ... re-update order history and set state...
+              .then((res) => {
+                // console.log('10: retrieve latest order history again after successful order history update')
+                return getOrderHistoryFromAPI(this.state.user.token)
+              })
+              .then(res => {
+                // console.log('11: set orders state with updated order history')
+                return this.setState({ orders: res.data.orders })
+              })
+              .then(() => {
+                // finally, reset stripeCheckout state to null and reset session storage
+                // console.log('12: reset stripeCheckout state and session storage')
+                this.setState({ stripeCheckout: null })
+                // console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
+                const { history } = this.props
+                history.push('/orders')
+              })
+              .then(() => {
+                // customer messaging
+                this.msgAlert({
+                  heading: 'Payment Confirmation',
+                  message: messages.paymentConfirmed,
+                  variant: 'info'
+                })
+              })
+              .catch()
+          }
+          if (this.state.stripeCheckout === 'failure') {
+            // finally, reset stripeCheckout state to null and reset session storage
+            // console.log('12: reset stripeCheckout state and session storage')
+            this.setState({ stripeCheckout: null })
+            // console.log('13: redirect browser to either /orders or /cart depending on result of Stripe payment')
+            const { history } = this.props
+            history.push('/cart')
+            // customer messaging
+            this.msgAlert({
+              heading: 'Payment Unsuccessful',
+              message: messages.paymentUnsuccessful,
+              variant: 'warning'
+            })
+          }
+        })
+    }
   }
 
   setUser = user => {
     this.setState({ user })
+    // store the token in session storage for persistence after Stripe checkout
     window.sessionStorage.setItem('token', user.token)
-    console.log(user.token)
   }
 
   clearUser = () => this.setState({ user: null })
@@ -85,51 +171,45 @@ class App extends Component {
     })
   }
 
-  handleAddProductEvent = (product) => {
+  handleAddProductEvent = (product, quantityAdder) => {
+    const { user, orders } = this.state
     // before checking the order history for products, get the latest order history from API
-    getOrderHistoryFromAPI(this.state.user.token)
-      .then(response => this.setAppOrderHistoryState(response))
-      .then(() => {
-        const cart = this.state.orders.find(order => order.status === 'cart')
-        if (this.state.user) {
-          // Check if orders contain order with property status === cart
-          // If no such order exists, send create-new-order request to API
-          if (cart) {
-            // If cart order exists, check if passed productId matches an order item
-            const orderItem = cart.orderItems.find(orderItem => orderItem.productId.toString() === product._id)
-            if (orderItem) {
-              // If yes: increment said order item quantity by 1
-              updateOrderItemWithQuantity(orderItem.quantity + 1, cart._id, orderItem._id, this.state.user.token)
-                // Update order history and set state in APP component
-                .then(() => getOrderHistoryFromAPI(this.state.user.token))
-                .then(response => this.setAppOrderHistoryState(response))
-                .catch(console.error)
-            } else {
-              // If no: send create-new-order-item request to API
-              createNewOrderItemWithData(cart._id, this.state.user.token, product)
-                // Update order history and set state in APP component
-                .then(() => getOrderHistoryFromAPI(this.state.user.token))
-                .then(response => this.setAppOrderHistoryState(response))
-                .catch(console.error)
-            }
-          } else {
-            // Create new order with status cart
-            createNewOrder(this.state.user.token)
-              .then(() => {
-                // Create new order-item
-                return createNewOrderItemWithData(cart._id, this.state.user.token, product)
-              })
-              .catch(console.error)
-          }
-        } else {
+    if (user) {
+      // find cart from order history
+      const cart = orders.find(order => order.status === 'cart')
+      // check if passed productId matches an order item
+      const orderItem = cart.orderItems.find(orderItem => orderItem.productId.toString() === product._id)
+      if (orderItem) {
+        // If order item with said productId exists: change order item quantity by quantityAdder
+        if (orderItem.quantity === 1 && quantityAdder === -1) {
+          // display customer alert
           this.msgAlert({
-            heading: 'Please Sign In First',
-            message: messages.signInFirst,
+            heading: 'Delete item?',
+            message: messages.clickDeleteItem,
             variant: 'info'
           })
+        } else {
+          updateOrderItemWithQuantity(orderItem.quantity + quantityAdder, cart._id, orderItem._id, user.token)
+            // Update order history and set state in APP component
+            .then(() => getOrderHistoryFromAPI(user.token))
+            .then(res => this.setAppOrderHistoryState(res))
+            .catch()
         }
+      } else {
+        // If no order item with said productId exists, create-new-order-item
+        createNewOrderItemWithData(cart._id, user.token, product)
+          // Update order history and set state in APP component
+          .then(() => getOrderHistoryFromAPI(user.token))
+          .then(res => this.setAppOrderHistoryState(res))
+          .catch()
+      }
+    } else {
+      this.msgAlert({
+        heading: 'Please Sign In First',
+        message: messages.signInFirst,
+        variant: 'info'
       })
-      .catch(console.error)
+    }
   }
 
   deleteAlert = (id) => {
@@ -145,12 +225,31 @@ class App extends Component {
     })
   }
 
+  getQueryStringObj = () => {
+    // get query string from withRouter browser history
+    const query = this.props.history.location.search
+    // use queryString library to parse query string into an object with key: value pairs
+    return queryString.parse(query)
+  }
+
+  handleDeleteOrderItem = (orderId, orderItemId) => {
+    // 1) send delete orderItem request to API
+    deleteOrderItem(orderId, orderItemId, this.state.user.token)
+      .then(() => {
+        // 2) upon successfully resolving the promise, get updated order history
+        return getOrderHistoryFromAPI(this.state.user.token)
+      })
+      // 3) update state in APP with latest order history
+      .then(response => this.setAppOrderHistoryState(response))
+      .catch()
+  }
+
   render () {
     const { msgAlerts, user, orders, products } = this.state
 
     return (
       <Fragment>
-        <Header user={user} />
+        <Header user={user} orders={orders} />
         {msgAlerts.map(msgAlert => (
           <AutoDismissAlert
             key={msgAlert.id}
@@ -165,9 +264,12 @@ class App extends Component {
           <Route exact path='/' render={() => (
             <LandingPage
               handleAddProductEvent={this.handleAddProductEvent}
-              products={this.state.products}
+              products={products}
+              orders={orders}
+              user={user}
+              handleDeleteOrderItem={this.handleDeleteOrderItem}
             />
-          )} />
+          )}/>
           <Route path='/sign-up' render={() => (
             <SignUp
               msgAlert={this.msgAlert}
@@ -202,6 +304,8 @@ class App extends Component {
               orders={orders}
               products={products}
               setAppOrderHistoryState={this.setAppOrderHistoryState}
+              handleDeleteOrderItem={this.handleDeleteOrderItem}
+              handleAddProductEvent={this.handleAddProductEvent}
             />
           )} />
           <AuthenticatedRoute user={user} path='/about-me' render={() => (
@@ -213,4 +317,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default withRouter(App)

@@ -4,6 +4,7 @@ import messages from '../AutoDismissAlert/messages'
 import { updateUser } from '../../api/auth'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import styled from 'styled-components'
 
 class AboutMe extends Component {
   constructor (props) {
@@ -54,7 +55,7 @@ class AboutMe extends Component {
     return (
       <div className="row">
         <div className="col-sm-10 col-md-8 mx-auto mt-5">
-          <h3>About Me</h3>
+          <H3>About Me</H3>
           <Form onSubmit={this.onUpdateUser}>
             <Form.Group controlId="firstName">
               <Form.Label>First Name</Form.Label>
@@ -128,5 +129,9 @@ class AboutMe extends Component {
     )
   }
 }
+
+const H3 = styled.h3`
+  margin: 40px 0 20px;
+`
 
 export default withRouter(AboutMe)

@@ -1,57 +1,35 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-
-// import { getOrders } from '../../api/auth'
-// import messages from '../AutoDismissAlert/messages'
-
-// import Form from 'react-bootstrap/Form'
-// import Button from 'react-bootstrap/Button'
+import styled from 'styled-components'
 
 class AboutUs extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      oldPassword: '',
-      newPassword: ''
-    }
-  }
-
-  // handleChange = event => this.setState({
-  //   [event.target.name]: event.target.value
-  // })
-
-  // onChangePassword = event => {
-  //   event.preventDefault()
-
-  //   const { msgAlert, history, user } = this.props
-
-  //   changePassword(this.state, user)
-  //     .then(() => msgAlert({
-  //       heading: 'Change Password Success',
-  //       message: messages.changePasswordSuccess,
-  //       variant: 'success'
-  //     }))
-  //     .then(() => history.push('/'))
-  //     .catch(error => {
-  //       this.setState({ oldPassword: '', newPassword: '' })
-  //       msgAlert({
-  //         heading: 'Change Password Failed with error: ' + error.message,
-  //         message: messages.changePasswordFailure,
-  //         variant: 'danger'
-  //       })
-  //     })
-  // }
-
   render () {
     // const { oldPassword, newPassword } = this.state
 
     return (
       <div className="row">
-        <h1>About Us Page</h1>
+        <div className="col-sm-12 col-md-10 mx-auto mt-5">
+          <H3>About Us</H3>
+          <P>We pride ourselves in delivering <b>fresh produce</b> to your home! All our products are sourced exclusively
+            from <b>local farmers</b>. Which has the added benefit of being <b>environmentally friendly</b>. Our produce is <b>local and
+            seasonal</b> so please bear with us if items are currently unavailable - our farmers are working hard on
+            the next harvest! It goes without saying that all our farmers are <b>exclusively No-GMO</b> and all produce is
+            certified <b>organic</b>.</P>
+          <br />
+          <P> Save time by shopping on our app and we will deliver the products right to your home.
+            We use Stripe to process your payment.</P>
+        </div>
       </div>
     )
   }
 }
+
+const H3 = styled.h3`
+  margin: 40px 0 20px;
+`
+
+const P = styled.p`
+  text-align: justify;
+`
 
 export default withRouter(AboutUs)
