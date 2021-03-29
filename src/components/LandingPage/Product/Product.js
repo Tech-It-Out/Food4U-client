@@ -63,7 +63,7 @@ const ProductComponent = styled.div`
   grid-template-columns: auto 50% 80px;
   // set position to relative to make this the initial containing block for the DeleteButton
   position: relative;
-  }
+  min-height: 100px;
   
   &:hover {
     div img {

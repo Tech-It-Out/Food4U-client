@@ -37,7 +37,7 @@ function getOrderItemsCount (orders) {
 }
 
 const Header = ({ user, orders }) => (
-  <NavbarStyled bg="light" variant="light" expand="md" fixed='top'>
+  <NavbarStyled bg="light" variant="light" expand="md" fixed='top' collapseOnSelect='true'>
     <NavbarBrandStyled href="#">
       Food4U
     </NavbarBrandStyled>
