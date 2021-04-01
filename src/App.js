@@ -46,21 +46,23 @@ class App extends Component {
 
   componentDidMount () {
     // make axios call to get the products...
-    getProductsFromApi()
-      // ...sort products alphabetically...
-      .then(res => {
-        // sort products array by product name in alphabetically ascending order
-        return res.data.products.sort(function (a, b) {
-          return a.name.localeCompare(b.name)
+    setTimeout(() => {
+      getProductsFromApi()
+        // ...sort products alphabetically...
+        .then(res => {
+          // sort products array by product name in alphabetically ascending order
+          return res.data.products.sort(function (a, b) {
+            return a.name.localeCompare(b.name)
+          })
         })
-      })
-      // ...and set products to state such that they are displayed on landing page
-      .then(products => {
-        this.setState({
-          products: products
+        // ...and set products to state such that they are displayed on landing page
+        .then(products => {
+          this.setState({
+            products: products
+          })
         })
-      })
-      .catch()
+        .catch()
+    }, 50000)
 
     // if user is logged in, get order history from api and update state
     if (this.state.user) {
