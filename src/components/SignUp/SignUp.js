@@ -1,67 +1,19 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 
-import { signUp, signIn } from '../../api/auth'
-import messages from '../AutoDismissAlert/messages'
-
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import {
-  createNewOrder,
-  getOrderHistoryFromAPI
-} from '../../api/orders'
 import styled from 'styled-components'
 
 class SignUp extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      email: '',
-      password: '',
-      passwordConfirmation: ''
-    }
-  }
-
-  handleChange = event => this.setState({
-    [event.target.name]: event.target.value
-  })
-
-  onSignUp = event => {
-    event.preventDefault()
-
-    const { msgAlert, history, setUser } = this.props
-
-    signUp(this.state)
-      .then(() => signIn(this.state))
-      .then(res => setUser(res.data.user))
-      .then(() => msgAlert({
-        heading: 'Sign Up Success',
-        message: messages.signUpSuccess,
-        variant: 'success'
-      }))
-      .then(() => history.push('/'))
-      .then(() => createNewOrder(this.props.getUserTokenFromAppState()))
-      .then(() => getOrderHistoryFromAPI(this.props.getUserTokenFromAppState()))
-      .then(orders => this.props.setAppOrderHistoryState(orders))
-      .catch(error => {
-        this.setState({ email: '', password: '', passwordConfirmation: '' })
-        msgAlert({
-          heading: 'Sign Up Failed with error: ' + error.message,
-          message: messages.signUpFailure,
-          variant: 'danger'
-        })
-      })
-  }
-
   render () {
-    const { email, password, passwordConfirmation } = this.state
+    const { onSignUp, handleSignUpFormChange, email, password, passwordConfirmation } = this.props
 
     return (
       <div className="row">
         <div className="col-sm-10 col-md-8 mx-auto mt-5">
           <H3>Sign Up</H3>
-          <Form onSubmit={this.onSignUp}>
+          <Form onSubmit={onSignUp}>
             <Form.Group controlId="email">
               <Form.Label>Email address</Form.Label>
               <Form.Control
@@ -70,7 +22,7 @@ class SignUp extends Component {
                 name="email"
                 value={email}
                 placeholder="Enter email"
-                onChange={this.handleChange}
+                onChange={handleSignUpFormChange}
               />
             </Form.Group>
             <Form.Group controlId="password">
@@ -81,7 +33,7 @@ class SignUp extends Component {
                 value={password}
                 type="password"
                 placeholder="Password"
-                onChange={this.handleChange}
+                onChange={handleSignUpFormChange}
               />
             </Form.Group>
             <Form.Group controlId="passwordConfirmation">
@@ -92,7 +44,7 @@ class SignUp extends Component {
                 value={passwordConfirmation}
                 type="password"
                 placeholder="Confirm Password"
-                onChange={this.handleChange}
+                onChange={handleSignUpFormChange}
               />
             </Form.Group>
             <Button
