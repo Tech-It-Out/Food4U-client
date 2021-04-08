@@ -29,7 +29,8 @@ import {
   updateOrderStatus,
   deleteOrderItem
 } from './api/orders'
-import { getUserDataFromAPI } from './api/auth'
+import { getUserDataFromAPI, signIn, signUp } from './api/auth'
+import EasySignInModal from './components/Modal/Modal'
 
 class App extends Component {
   constructor (props) {
@@ -39,7 +40,11 @@ class App extends Component {
       orders: null,
       product: null,
       stripeCheckout: null,
-      msgAlerts: []
+      msgAlerts: [],
+      isModal: false,
+      email: '',
+      password: '',
+      passwordConfirmation: ''
     }
     this.hydrateState()
   }
@@ -59,6 +64,14 @@ class App extends Component {
         this.setState({
           products: products
         })
+      })
+      .then(() => {
+        // display modal that offers users to sign-in with a mock-account after a short break
+        setTimeout(() => {
+          this.setState({
+            isModal: true
+          })
+        }, 1000)
       })
       .catch()
 
@@ -247,8 +260,71 @@ class App extends Component {
       .catch()
   }
 
+  handleCloseModal = () => {
+    this.setState({
+      isModal: false
+    })
+  }
+
+  handleExpeditedSignUp = () => {
+    Promise.resolve()
+      .then(() => this.setRandomSignUpDetails())
+      .then(() => this.onSignUp())
+      .catch()
+  }
+
+  makeRandomString = length => {
+    let result = ''
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length))
+    }
+    return result
+  }
+
+  setRandomSignUpDetails = () => {
+    // sets a random user profile which is needed if users prefer to not sign-in with their email
+    const password = this.makeRandomString(5)
+    this.setState({
+      email: `${this.makeRandomString(10)}@random.com`,
+      password: password,
+      passwordConfirmation: password
+    })
+  }
+
+  onSignUp = event => {
+    if (event) {
+      event.preventDefault()
+    }
+
+    signUp(this.state)
+      .then(() => signIn(this.state))
+      .then(res => this.setUser(res.data.user))
+      .then(() => this.msgAlert({
+        heading: 'Sign Up Success',
+        message: messages.signUpSuccess,
+        variant: 'success'
+      }))
+      .then(() => this.props.history.push('/'))
+      .then(() => createNewOrder(this.state.user.token))
+      .then(() => getOrderHistoryFromAPI(this.state.user.token))
+      .then(orders => this.setAppOrderHistoryState(orders))
+      .catch(error => {
+        this.setState({ email: '', password: '', passwordConfirmation: '' })
+        this.msgAlert({
+          heading: 'Sign Up Failed with error: ' + error.message,
+          message: messages.signUpFailure,
+          variant: 'danger'
+        })
+      })
+  }
+
+  handleSignUpFormChange = event => this.setState({
+    [event.target.name]: event.target.value
+  })
+
   render () {
-    const { msgAlerts, user, orders, products } = this.state
+    const { msgAlerts, user, orders, products, isModal } = this.state
     return (
       <Fragment>
         <Header user={user} orders={orders} />
@@ -263,6 +339,12 @@ class App extends Component {
           />
         ))}
         <main className="container">
+          <EasySignInModal
+            isModal={isModal}
+            user={user}
+            handleCloseModal={this.handleCloseModal}
+            handleExpeditedSignUp={this.handleExpeditedSignUp}
+          />
           <Route exact path='/' render={() => (
             <LandingPage
               handleAddProductEvent={this.handleAddProductEvent}
@@ -278,6 +360,11 @@ class App extends Component {
               setUser={this.setUser}
               setAppOrderHistoryState={this.setAppOrderHistoryState}
               getUserTokenFromAppState={this.getUserTokenFromAppState}
+              onSignUp={this.onSignUp}
+              handleSignUpFormChange={this.handleSignUpFormChange}
+              email={this.state.email}
+              password={this.state.password}
+              passwordConfirmation={this.state.passwordConfirmation}
             />
           )} />
           <Route path='/sign-in' render={() => (
