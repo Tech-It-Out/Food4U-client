@@ -1,5 +1,35 @@
 # E-Commerce Platform: Food4U
 
+## Executive Summary
+- E-commerce platform for fresh produce
+- CRUDing on 19 RESTful routes for 4 resources
+- NoSQL based database management for user, order, order-item, and stock-keeping-unit resources
+- Front- and back-end integration of Stripe checkout
+- Custom-built middleware avoids need for front-end injection of order details
+- Session persistence managed by storing React state in session-storage and subsequent rehydration upon customer returning to client after Stripe checkout
+
+### Technologies Used
+Technology | Front-End | Back-End
+--- | :---: | :---:
+Axios | x
+bcrypt | | x
+Bootstrap | x
+cors | | x
+Express | | x
+GeoIPLite | | x
+HTML5 | x
+JavaScript | x | x
+Lodash | x | x
+Moment | x
+MongoDB | | x
+Mongoose | | x
+Node.JS | | x
+Passport | | x
+React | x
+SCSS | x
+Stripe | x | x
+Styled-components | x
+
 ## Background
 
 The genesis of Food4U is to add local distribution channels for farmers and to offer locally farmed seasonal produce to customers.
